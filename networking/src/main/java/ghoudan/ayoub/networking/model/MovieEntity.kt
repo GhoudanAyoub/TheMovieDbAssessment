@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MovieEntity(
     @SerialName("id") val id: Int,
-    @SerialName("name") val title: String?,
+    @SerialName("title") val title: String?,
     @SerialName("overview") val description: String?,
     @SerialName("popularity") val popularity: Double?,
     @SerialName("vote_average") val voteAverage: Double?,
