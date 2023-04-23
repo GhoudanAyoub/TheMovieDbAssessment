@@ -1,0 +1,65 @@
+name: build
+
+on:
+  push:
+    paths-ignore:
+      - 'doc/**'
+      - 'docs/**'
+      - '*.md'
+      - '*.yml'
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Prepare Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build --scan
+
+      - name: Check spotless
+        run: ./gradlew spotlessCheck --stacktrace
+
+      - name: Assemble debug
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Assemble release
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Bundle debug
+        run: ./gradlew bundleDebug --stacktrace
+
+      - name: Bundle release
+        run: ./gradlew bundleRelease --stacktrace
+
+      - name: Run tests
+        run: ./gradlew check --stacktrace
+
+      - name: Bundle the build report
+        if: failure()
+        run: find . -type d -name 'reports' | zip -@ -r build-reports.zip
+
+      - name: Upload the build report
+        if: failure()
+        uses: actions/upload-artifact@master
+        with:
+          name: error-report
+          path: build-reports.zip
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: ghoudan-movie-apk
+          path: app/build/outputs/apk/
