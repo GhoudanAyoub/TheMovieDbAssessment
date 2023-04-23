@@ -10,6 +10,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.7.10"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.7.10"
     id("androidx.navigation.safeargs.kotlin") version "2.4.2" apply false
+    id 'com.diffplug.spotless' version '6.4.2'
 }
 
 
@@ -35,6 +36,7 @@ subprojects {
         }
         apply plugin: 'kotlin-android'
         apply plugin: 'kotlin-parcelize'
+        apply plugin: 'com.diffplug.spotless'
 
         android {
             compileSdkVersion 33
@@ -87,6 +89,15 @@ subprojects {
     } else {
         apply plugin: 'java-library'
         apply plugin: 'kotlin'
+    }
+}
+spotless {
+    kotlin {
+        target '**/*.kt'
+        targetExclude("$buildDir/**/*.kt")
+        targetExclude('bin/**/*.kt')
+
+        ktlint('0.43.2').userData([max_line_length: "100"])
     }
 }
 
