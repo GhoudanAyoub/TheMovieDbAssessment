@@ -4,6 +4,7 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("kotlin-kapt")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -11,6 +12,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":local_models"))
     implementation(Deps.Androidx.CoreKtx.coreKtx)
     implementation(Deps.Androidx.AppCompat.appCompat)
     implementation(Deps.Google.Material.material)
@@ -27,5 +29,8 @@ dependencies {
     implementation(Deps.Coroutines.coroutines)
 
     implementation(Deps.Timber.timber)
+
+    implementation(Deps.Glide.glide)
+    kapt(Deps.Glide.compiler)
 
 }
