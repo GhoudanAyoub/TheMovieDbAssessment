@@ -7,15 +7,7 @@ plugins {
 }
 
 android {
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
+    namespace = "ghoudan.ayoub.movieBest.networking"
 }
 dependencies {
 

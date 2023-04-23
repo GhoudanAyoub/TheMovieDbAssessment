@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "ghoudan.ayoub.movieBest.local_models"
+    namespace = "ghoudan.ayoub.movieBest.ui_core"
 }
 
 dependencies {

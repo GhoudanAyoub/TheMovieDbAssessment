@@ -7,16 +7,9 @@ plugins {
 }
 
 android {
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
+    namespace = "ghoudan.ayoub.movieBest.common"
 }
+
 dependencies {
     implementation(Deps.Androidx.CoreKtx.coreKtx)
     implementation(Deps.Androidx.AppCompat.appCompat)

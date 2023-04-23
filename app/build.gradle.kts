@@ -23,6 +23,7 @@ android {
 
 dependencies {
 
+    implementation(project(":ui_core"))
     implementation(project(":local_models"))
     implementation(project(":networking"))
 
