@@ -26,6 +26,7 @@ dependencies {
     implementation(project(":ui_core"))
     implementation(project(":local_models"))
     implementation(project(":networking"))
+    implementation(project(":common"))
 
     implementation(Deps.Androidx.CoreKtx.coreKtx)
     implementation(Deps.Androidx.AppCompat.appCompat)

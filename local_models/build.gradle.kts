@@ -11,6 +11,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":common"))
     implementation(Deps.Androidx.CoreKtx.coreKtx)
     implementation(Deps.Androidx.AppCompat.appCompat)
     implementation(Deps.Google.Material.material)

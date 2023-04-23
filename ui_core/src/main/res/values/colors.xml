@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="brand_primary">#11314F</color>
+    <color name="brand_secondary">#EB6C43</color>
+    <color name="brand_bright">#F18800</color>
+    <color name="brand_hover">#153D63</color>
+    <color name="brand_pastel">#EDF8FF</color>
+
+    <color name="content_dark__80op">#CC1D2939</color>
+    <color name="content_dark">#1D2939</color>
+    <color name="content_darkGrey">#667085</color>
+    <color name="content_Grey">#98A2B3</color>
+    <color name="content_lightGrey">#E4E7EC</color>
+    <color name="content_softGrey">#F2F4F7</color>
+    <color name="content_ultraLightGrey">#F9FAFB</color>
+    <color name="content_lightOrange">#FFEAD5</color>
+    <color name="content_white">#FFFFFF</color>
+
+    <color name="status_success">#039855</color>
+    <color name="status_alert">#FFC700</color>
+    <color name="status_error">#E03636</color>
+    <color name="status_successLight">#EDFFF7</color>
+    <color name="status_alertLight">#FFF4DF</color>
+    <color name="status_errorLight">#FFE2E0</color>
 </resources>
