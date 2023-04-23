@@ -14,3 +14,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "TheMovieDbAssessment"
 include ("app")
+include ("networking")
+include ("common")
+include ("local_models")

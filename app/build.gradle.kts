@@ -23,6 +23,9 @@ android {
 
 dependencies {
 
+    implementation(project(":local_models"))
+    implementation(project(":networking"))
+
     implementation(Deps.Androidx.CoreKtx.coreKtx)
     implementation(Deps.Androidx.AppCompat.appCompat)
     implementation(Deps.Androidx.Core.coreSplashScreen)
