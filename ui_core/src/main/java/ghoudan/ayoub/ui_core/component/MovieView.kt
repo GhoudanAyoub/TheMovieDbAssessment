@@ -10,6 +10,7 @@ import ghoudan.ayoub.local_models.models.Movies
 import ghoudan.ayoub.local_models.models.getPictureUrl
 import ghoudan.ayoub.movieBest.ui_core.R
 import ghoudan.ayoub.movieBest.ui_core.databinding.SampleMovieViewBinding
+import timber.log.Timber
 
 class MovieView : ConstraintLayout {
 
@@ -32,6 +33,7 @@ class MovieView : ConstraintLayout {
         Glide.with(context)
             .load(movie.getPictureUrl())
             .placeholder(R.drawable.ic_new_placeholder)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(binding.movieImg)
 
         if(movie.isFavorite){
@@ -50,6 +52,12 @@ class MovieView : ConstraintLayout {
         }
         binding.addQtyBtn.setOnClickListener {
             movie.isFavorite= !movie.isFavorite
+
+            if(movie.isFavorite){
+                binding.addQtyBtn.setImageResource(R.drawable.ic_favorite_enabled)
+            }else{
+                binding.addQtyBtn.setImageResource(R.drawable.ic_favorite)
+            }
             listener.onFavoriteClicked(movie)
         }
     }

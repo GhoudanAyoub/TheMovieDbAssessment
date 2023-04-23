@@ -19,6 +19,13 @@ class HomeViewModel @Inject constructor(
     private var moviesLiveData: MutableLiveData<ResourceResponse<List<Movies>>> = MutableLiveData()
     val movies: LiveData<ResourceResponse<List<Movies>>> = moviesLiveData
 
+    fun filterMovies(query: String) {
+        viewModelScope.launch {
+            moviesRepository.searchMovies(1,query).collect { moviesResult ->
+                moviesLiveData.value = moviesResult
+            }
+        }
+    }
     fun fetchPopularMovies(pageNumber: Int) {
         viewModelScope.launch {
             moviesRepository.fetchMovies(pageNumber).collect { moviesResult ->

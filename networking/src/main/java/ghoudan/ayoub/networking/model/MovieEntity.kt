@@ -12,4 +12,4 @@ data class MovieEntity(
     @SerialName("vote_average") val voteAverage: Double?,
     @SerialName("vote_count") val voteCount: Int?,
     @SerialName("poster_path") val posterPath: String?,
-    @SerialName("first_air_date") val releaseDate: String?)
+    @SerialName("release_date") val releaseDate: String?)

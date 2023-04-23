@@ -16,7 +16,7 @@
     </style>
     <style name="ProductRoundedImage">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">12dp</item>
+        <item name="cornerSize">8dp</item>
     </style>
 
     <style name="customNavigationBackIcon" parent="Widget.AppCompat.DrawerArrowToggle">
@@ -36,6 +36,14 @@
         <item name="closeIcon">@drawable/ic_close_icon</item>
         <item name="android:textSize">13sp</item>
         <item name="android:textColorHint">@color/content_darkGrey</item>
+    </style>
+
+    <style name="MainNavigation" parent="Widget.Design.BottomNavigationView">
+        <item name="itemBackground">@color/content_white</item>
+        <item name="itemIconTint">@color/nav_item_text_color</item>
+        <item name="itemTextColor">@color/nav_item_text_color</item>
+        <item name="android:textSize">11sp</item>
+        <item name="lineHeight">16dp</item>
     </style>
 
 </resources>

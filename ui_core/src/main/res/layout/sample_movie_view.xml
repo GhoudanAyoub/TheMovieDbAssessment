@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:layout_height="wrap_content"
-    tools:layout_width="160dp"
+    tools:layout_width="170dp"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <FrameLayout
@@ -12,28 +12,25 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="210dp"
+            android:layout_height="280dp"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/bg_rounded_lightgrey_stroke"
             android:gravity="center_horizontal"
-            android:minHeight="246dp"
-            android:paddingBottom="4dp">
+            android:minHeight="280dp">
 
             <FrameLayout
                 android:id="@+id/img_container"
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp">
+                android:layout_height="210dp"
+                android:layout_alignParentTop="true">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/movie_img"
                     android:layout_width="match_parent"
-                    android:layout_height="130dp"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:contentDescription="@null"
-                    android:scaleType="centerCrop"
+                    android:scaleType="fitXY"
                     app:shapeAppearance="@style/ProductRoundedImage"
                     app:strokeColor="@null"
                     tools:src="@tools:sample/backgrounds/scenic" />
@@ -65,14 +62,21 @@
                 <TextView
                     android:id="@+id/avgVote"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:drawableStart="@drawable/ic_rating_star"
+                    android:drawablePadding="4dp"
+                    android:gravity="bottom"
                     android:textColor="@color/content_darkGrey"
                     tools:text="8.22" />
+
                 <TextView
                     android:id="@+id/vote_count"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:drawableStart="@drawable/ic_baseline_person_outline"
+                    android:drawablePadding="4dp"
+                    android:gravity="bottom"
                     android:textColor="@color/content_darkGrey"
                     tools:text="200018" />
 
@@ -101,7 +105,7 @@
                 android:clickable="true"
                 android:contentDescription="@null"
                 android:focusable="true"
-                android:padding="10dp"
+                android:padding="6dp"
                 android:src="@drawable/ic_favorite"
                 android:stateListAnimator="@null" />
 

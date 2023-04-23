@@ -42,12 +42,18 @@ class HomeFragment : Fragment(), MovieListener {
 
         binding.movieSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                moviesListAdapter.filter.filter(query)
+                if (query.isEmpty())
+                    homeFragmentViewModel.fetchPopularMovies(1)
+                else
+                    homeFragmentViewModel.filterMovies(query)
                 return true
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                moviesListAdapter.filter.filter(newText)
+                if (newText.isEmpty())
+                    homeFragmentViewModel.fetchPopularMovies(1)
+                else
+                    homeFragmentViewModel.filterMovies(newText)
                 return true
             }
         })
@@ -67,7 +73,7 @@ class HomeFragment : Fragment(), MovieListener {
                 }
                 is ResourceResponse.Success -> {
                     moviesResult.data?.let {
-                        moviesListAdapter.differ.submitList(it.sortedBy { it.title })
+                        moviesListAdapter.setMoviesList(it.sortedBy { it.title })
                     }
                 }
             }
@@ -97,12 +103,14 @@ class HomeFragment : Fragment(), MovieListener {
             if (itemDecorationCount == 0) {
                 addItemDecoration(itemDecoration)
             }
-            addOnScrollListener(object :
-                EndlessRecyclerViewScrollListener(recyclerViewLayoutManager) {
-                override fun onLoadMore(page: Int) {
-                    homeFragmentViewModel.fetchPopularMovies(page)
-                }
-            })
+            binding.movieRecycler.layoutManager?.let { layoutManager ->
+                addOnScrollListener(object :
+                    EndlessRecyclerViewScrollListener(recyclerViewLayoutManager) {
+                    override fun onLoadMore(page: Int) {
+                        homeFragmentViewModel.fetchPopularMovies(page)
+                    }
+                })
+            }
         }
     }
 

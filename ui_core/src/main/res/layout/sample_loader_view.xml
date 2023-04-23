@@ -9,7 +9,7 @@
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/loader"
         style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="46dp"
         android:indeterminateTint="@color/brand_primary"
         app:layout_constraintEnd_toEndOf="parent"
