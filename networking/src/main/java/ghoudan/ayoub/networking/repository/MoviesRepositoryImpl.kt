@@ -16,6 +16,15 @@ class MoviesRepositoryImpl @Inject constructor(
     private val api: Api
 ) : MoviesRepository {
 
+    override fun searchMovies(pageNumber: Int,query: String): Flow<ResourceResponse<List<Movies>>> {
+        return flow<ResourceResponse<List<Movies>>> {
+            val result = api.searchMovies(1,query)
+            emit(ResourceResponse.Success(result.data.map { it.toAppModel() }))
+        }.catch { exception ->
+            emit(ResourceResponse.Error(exception))
+        }.onStart { emit(ResourceResponse.Loading()) }
+    }
+
     override fun fetchMovies(pageNumber: Int): Flow<ResourceResponse<List<Movies>>> {
         return flow<ResourceResponse<List<Movies>>> {
             val result = api.getPopularMovies(pageNumber)

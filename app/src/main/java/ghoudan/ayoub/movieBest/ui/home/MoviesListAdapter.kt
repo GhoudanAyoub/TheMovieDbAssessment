@@ -20,6 +20,7 @@ import java.util.Locale
 class MoviesListAdapter(val movieListener: MovieListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
+    private var moviesList = arrayListOf<Movies>()
     companion object {
         const val TYPE_ITEM = 0
         const val TYPE_LOADER = 1
@@ -31,11 +32,11 @@ class MoviesListAdapter(val movieListener: MovieListener) :
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val filteredList: ArrayList<Movies> = arrayListOf()
                 if (constraint.isNullOrEmpty()) {
-                    filteredList.addAll(differ.currentList)
+                    filteredList.addAll(moviesList)
                 } else {
                     val filterKeyword = constraint.toString()
                         .lowercase(Locale.getDefault()).trim()
-                    differ.currentList.filter { cmd ->
+                    moviesList.filter { cmd ->
                         cmd.id.toString().lowercase().contains(filterKeyword) ||
                                 cmd.title.toString().lowercase().contains(filterKeyword)
                     }.forEach { cmd ->
@@ -51,20 +52,12 @@ class MoviesListAdapter(val movieListener: MovieListener) :
                 } else {
                     results.values as ArrayList<Movies>
                 }
-                differ.submitList(filteredCmdList)
+                moviesList.addAll(filteredCmdList)
                 notifyDataSetChanged()
             }
         }
     }
 
-    private val differCallback = object : DiffUtil.ItemCallback<Movies>() {
-        override fun areItemsTheSame(oldItem: Movies, newItem: Movies) =
-            oldItem.id == newItem.id || oldItem.isFavorite == newItem.isFavorite
-
-        override fun areContentsTheSame(oldItem: Movies, newItem: Movies) =
-            oldItem == newItem
-    }
-    val differ = AsyncListDiffer(this, differCallback)
 
 
     inner class MovieItemViewHolder(private val movieItemView: ItemMovieBinding) :
@@ -109,7 +102,7 @@ class MoviesListAdapter(val movieListener: MovieListener) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MovieItemViewHolder -> {
-                val movieItem = differ.currentList[position]
+                val movieItem = moviesList[position]
                 holder.bind(MovieView.MovieViewData(movieItem, movieListener))
             }
             is LoaderViewHolder -> holder.bind()
@@ -117,15 +110,21 @@ class MoviesListAdapter(val movieListener: MovieListener) :
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position != differ.currentList.size) {
+        return if (position != moviesList.size) {
             TYPE_ITEM
         } else {
             TYPE_LOADER
         }
     }
 
+    fun setMoviesList(movies: List<Movies>) {
+        this.moviesList.clear()
+        this.moviesList.addAll(movies)
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int {
-        return differ.currentList.size + 1
+        return moviesList.size + 1
     }
 
 }
