@@ -32,10 +32,14 @@ class MovieView : ConstraintLayout {
         Glide.with(context)
             .load(movie.getPictureUrl())
             .placeholder(R.drawable.ic_new_placeholder)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(binding.movieImg)
 
-        // Sets the product title based on the language
+        if(movie.isFavorite){
+            binding.addQtyBtn.setImageResource(R.drawable.ic_favorite_enabled)
+        }else{
+            binding.addQtyBtn.setImageResource(R.drawable.ic_favorite)
+        }
+
         binding.movieTitle.text = movie.title
         binding.avgVote.text = movie.voteAverage.toString()
         binding.voteCount.text = movie.voteCount.toString()

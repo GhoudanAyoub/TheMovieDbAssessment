@@ -8,7 +8,7 @@ import retrofit2.http.Query
 
 interface Api {
 
-    @GET("discover/movie?sort_by=popularity.desc")
+    @GET("movie/top_rated")
     suspend fun getPopularMovies(
         @Query("page") pageNumber: Int
     ): ApiResponse<List<MovieEntity>>

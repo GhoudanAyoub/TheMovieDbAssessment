@@ -16,10 +16,15 @@
     <color name="content_lightOrange">#FFEAD5</color>
     <color name="content_white">#FFFFFF</color>
 
+    <color name="transparent">#00FFFFFF</color>
     <color name="status_success">#039855</color>
     <color name="status_alert">#FFC700</color>
     <color name="status_error">#E03636</color>
     <color name="status_successLight">#EDFFF7</color>
     <color name="status_alertLight">#FFF4DF</color>
     <color name="status_errorLight">#FFE2E0</color>
+    <color name="light_blue_400">#FF29B6F6</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="gray_400">#FFBDBDBD</color>
+    <color name="gray_600">#FF757575</color>
 </resources>

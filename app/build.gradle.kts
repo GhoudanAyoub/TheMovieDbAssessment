@@ -43,4 +43,6 @@ dependencies {
 
     implementation(Deps.Hilt.hilt)
     kapt(Deps.Hilt.hilt_compiler)
+
+    implementation(Deps.Timber.timber)
 }
