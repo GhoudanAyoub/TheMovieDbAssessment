@@ -1,6 +1,104 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+import ghoudan.ayoub.movieBest.CI
+import ghoudan.ayoub.movieBest.Deps
+
 plugins {
-    id 'com.android.application' version '7.4.2' apply false
-    id 'com.android.library' version '7.4.2' apply false
-    id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
+    id("com.android.application") version "7.2.2" apply false
+    id("com.android.library") version "7.2.2" apply false
+    id("org.jetbrains.kotlin.android") version "1.7.10" apply false
+    id("com.google.dagger.hilt.android") version "2.44" apply false
+    id("org.jetbrains.kotlin.jvm") version "1.7.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.10"
+    id("androidx.navigation.safeargs.kotlin") version "2.4.2" apply false
+}
+
+
+allprojects {
+    group = "ghoudan.ayoub.movieBest"
+}
+
+
+
+Properties props = new Properties()
+props.load(new FileInputStream(file('modules.properties')))
+def appModules = props.getProperty('appModules').split(",")
+
+
+subprojects {
+
+    if (appModules.contains(it.name)) {
+        if (it.name == 'app') {
+            apply plugin: 'com.android.application'
+            apply plugin: 'org.jetbrains.kotlin.android'
+        } else {
+            apply plugin: 'com.android.library'
+        }
+        apply plugin: 'kotlin-android'
+        apply plugin: 'kotlin-parcelize'
+
+        android {
+            compileSdkVersion 33
+            namespace = "ghoudan.ayoub.movieBest"
+            defaultConfig {
+                minSdkVersion 21
+                targetSdkVersion 33
+                versionCode CI.versionCode
+                versionName CI.publishVersion
+
+                vectorDrawables {
+                    useSupportLibrary true
+                }
+
+                testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+                compileOptions {
+                    sourceCompatibility CI.jvmTarget
+                    targetCompatibility CI.jvmTarget
+                }
+
+                kotlinOptions {
+                    jvmTarget = CI.jvmTarget
+                }
+
+                testOptions {
+                    unitTests.all {
+                        useJUnitPlatform()
+                    }
+                }
+
+                buildFeatures {
+                    viewBinding true
+                }
+
+                packagingOptions {
+                    resources {
+                        excludes += ['/*.jar', '/META-INF/{AL2.0,LGPL2.1}',
+                                     '**/attach_hotspot_windows.dll',
+                                     'META-INF/licenses/**',
+                                     'META-INF/LICENSE*']
+                    }
+                }
+            }
+
+            buildFeatures {
+                viewBinding true
+            }
+        }
+    } else {
+        apply plugin: 'java-library'
+        apply plugin: 'kotlin'
+    }
+}
+
+
+tasks.withType(Test) {
+    def n = Runtime.getRuntime().availableProcessors() / 2
+    maxParallelForks = n > 0 ? n : 1
+    testLogging {
+        events("passed",
+                "skipped",
+                "failed",
+                "standard_out",
+                "standard_error")
+    }
 }
