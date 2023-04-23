@@ -49,6 +49,9 @@ object NetworkingModule {
     fun provideJsonSerializer(): Json {
         return Json {
             ignoreUnknownKeys = true
+            isLenient = true
+            encodeDefaults = true
+            explicitNulls = false
         }
     }
 
