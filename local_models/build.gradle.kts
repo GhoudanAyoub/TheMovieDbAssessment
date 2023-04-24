@@ -29,4 +29,7 @@ dependencies {
 
     implementation(Deps.Timber.timber)
 
+    implementation(Deps.Androidx.Room.room)
+    kapt(Deps.Androidx.Room.processor)
+
 }

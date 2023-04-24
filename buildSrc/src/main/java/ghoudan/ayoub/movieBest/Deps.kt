@@ -41,6 +41,7 @@ object Deps {
             private const val version = "2.4.3"
             const val room = "androidx.room:room-runtime:$version"
             const val processor = "androidx.room:room-compiler:$version"
+            const val room_ktx = "androidx.room:room-ktx:$version"
         }
 
         object Test {
@@ -60,6 +61,10 @@ object Deps {
         object Material {
             private const val version = "1.6.1"
             const val material = "com.google.android.material:material:$version"
+        }
+        object Gson {
+            private const val version = "2.8.6"
+            const val gson = "com.google.code.gson:gson:$version"
         }
     }
 

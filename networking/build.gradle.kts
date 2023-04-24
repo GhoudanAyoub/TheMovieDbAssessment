@@ -31,4 +31,10 @@ dependencies {
 
     implementation(Deps.Timber.timber)
 
+    implementation(Deps.Androidx.Room.room)
+    implementation(Deps.Androidx.Room.room_ktx)
+    kapt(Deps.Androidx.Room.processor)
+
+    implementation(Deps.Google.Gson.gson)
+
 }
