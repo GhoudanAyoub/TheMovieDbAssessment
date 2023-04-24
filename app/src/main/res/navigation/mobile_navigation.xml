@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="ghoudan.ayoub.movieBest.ui.dashboard.DashboardFragment"
+        android:name="ghoudan.ayoub.movieBest.ui.favorite.FavoriteFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard" />
 
