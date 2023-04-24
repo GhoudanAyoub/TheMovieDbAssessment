@@ -59,6 +59,10 @@ class HomeFragment : Fragment(), MovieListener {
         })
 
         setupMoviesList()
+        subscribe()
+    }
+
+    private fun subscribe() {
         homeFragmentViewModel.fetchPopularMovies(1)
         homeFragmentViewModel.movies.observe(viewLifecycleOwner) { moviesResult ->
             when (moviesResult) {
@@ -76,6 +80,11 @@ class HomeFragment : Fragment(), MovieListener {
                         moviesListAdapter.setMoviesList(it.sortedBy { it.title })
                     }
                 }
+            }
+        }
+        homeFragmentViewModel.updatedMovie.observe(viewLifecycleOwner) { moviesResult ->
+            moviesResult?.let { movie ->
+                moviesListAdapter.updateMovie(movie)
             }
         }
     }
@@ -119,7 +128,7 @@ class HomeFragment : Fragment(), MovieListener {
     }
 
     override fun onFavoriteClicked(movie: Movies) {
-
+        homeFragmentViewModel.handleFavoriteMovie(movie)
     }
 
 }

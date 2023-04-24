@@ -127,4 +127,9 @@ class MoviesListAdapter(val movieListener: MovieListener) :
         return moviesList.size + 1
     }
 
+    fun updateMovie(movie: Movies) {
+        moviesList.find { it.id == movie.id }?.let { _updatedMovie ->
+            notifyItemChanged(moviesList.indexOf(_updatedMovie))
+        }
+    }
 }
