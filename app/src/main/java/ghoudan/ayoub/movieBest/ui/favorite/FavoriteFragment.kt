@@ -1,4 +1,4 @@
-package ghoudan.ayoub.movieBest.ui.home
+package ghoudan.ayoub.movieBest.ui.favorite
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,17 +14,19 @@ import dagger.hilt.android.AndroidEntryPoint
 import ghoudan.ayoub.common.utils.EndlessRecyclerViewScrollListener
 import ghoudan.ayoub.common.utils.MoviesVerticalItemDecoration
 import ghoudan.ayoub.local_models.models.Movies
+import ghoudan.ayoub.movieBest.databinding.FragmentDashboardBinding
 import ghoudan.ayoub.movieBest.databinding.FragmentHomeBinding
+import ghoudan.ayoub.movieBest.ui.home.HomeViewModel
+import ghoudan.ayoub.movieBest.ui.home.MoviesListAdapter
 import ghoudan.ayoub.networking.response.ResourceResponse
 import ghoudan.ayoub.ui_core.component.MovieListener
 import timber.log.Timber
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), MovieListener {
+class FavoriteFragment : Fragment(), MovieListener {
 
-    private var searchQuery: String = ""
-    private lateinit var binding: FragmentHomeBinding
-    private val homeFragmentViewModel by viewModels<HomeViewModel>()
+    private lateinit var binding: FragmentDashboardBinding
+    private val favoriteViewModel by viewModels<FavoriteViewModel>()
 
     private val moviesListAdapter: MoviesListAdapter by lazy {
         MoviesListAdapter(this)
@@ -35,40 +37,20 @@ class HomeFragment : Fragment(), MovieListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        binding = FragmentDashboardBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.movieSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                searchQuery = query
-                if (query.isEmpty())
-                    homeFragmentViewModel.fetchPopularMovies(1)
-                else
-                    homeFragmentViewModel.filterMovies(1,query)
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                searchQuery = newText
-                if (newText.isEmpty())
-                    homeFragmentViewModel.fetchPopularMovies(1)
-                else
-                    homeFragmentViewModel.filterMovies(1,newText)
-                return true
-            }
-        })
-
         setupMoviesList()
         subscribe()
     }
 
     private fun subscribe() {
-        homeFragmentViewModel.fetchPopularMovies(1)
-        homeFragmentViewModel.movies.observe(viewLifecycleOwner) { moviesResult ->
+        favoriteViewModel.getFavoriteMovies()
+        favoriteViewModel.movies.observe(viewLifecycleOwner) { moviesResult ->
             when (moviesResult) {
                 is ResourceResponse.Loading -> {}
                 is ResourceResponse.Error -> {
@@ -86,7 +68,7 @@ class HomeFragment : Fragment(), MovieListener {
                 }
             }
         }
-        homeFragmentViewModel.updatedMovie.observe(viewLifecycleOwner) { moviesResult ->
+        favoriteViewModel.updatedMovie.observe(viewLifecycleOwner) { moviesResult ->
             moviesResult?.let { movie ->
                 moviesListAdapter.updateMovie(movie)
             }
@@ -107,21 +89,6 @@ class HomeFragment : Fragment(), MovieListener {
             if (itemDecorationCount == 0) {
                 addItemDecoration(itemDecoration)
             }
-            binding.movieRecycler.layoutManager?.let { layoutManager ->
-                addOnScrollListener(
-                    object : EndlessRecyclerViewScrollListener(layoutManager) {
-                        override fun onLoadMore(
-                            page: Int,
-                            take: Int,
-                            view: RecyclerView
-                        ) {
-                            if (searchQuery.isEmpty())
-                                homeFragmentViewModel.fetchPopularMovies(page)
-                            else
-                                homeFragmentViewModel.filterMovies(page, searchQuery)
-                        }
-                    })
-            }
         }
     }
 
@@ -130,7 +97,7 @@ class HomeFragment : Fragment(), MovieListener {
     }
 
     override fun onFavoriteClicked(movie: Movies) {
-        homeFragmentViewModel.handleFavoriteMovie(movie)
+        favoriteViewModel.handleFavoriteMovie(movie)
     }
 
 }

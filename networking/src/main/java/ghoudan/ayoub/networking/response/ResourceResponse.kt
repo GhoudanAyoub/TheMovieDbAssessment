@@ -1,7 +1,7 @@
 package ghoudan.ayoub.networking.response
 
 sealed class ResourceResponse <T> (
-    val data: T ? = null,
+    var data: T ? = null,
     val error: Throwable ? = null
 ) {
     class Success<T>(data: T) : ResourceResponse<T>(data)

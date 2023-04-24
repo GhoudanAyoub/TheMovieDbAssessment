@@ -16,6 +16,8 @@ class HomeViewModel @Inject constructor(
     private val moviesRepository: MoviesRepositoryImpl
 ) : ViewModel() {
 
+    private var moviesList = arrayListOf<Movies>()
+    private var searchedMoviesList = arrayListOf<Movies>()
     private var moviesLiveData: MutableLiveData<ResourceResponse<List<Movies>>> = MutableLiveData()
     val movies: LiveData<ResourceResponse<List<Movies>>> = moviesLiveData
 
@@ -23,9 +25,19 @@ class HomeViewModel @Inject constructor(
     private var updatedMovieLiveData: MutableLiveData<Movies> = MutableLiveData()
     val updatedMovie: LiveData<Movies> = updatedMovieLiveData
 
-    fun filterMovies(query: String) {
+    fun filterMovies(
+        pageNumber: Int,query: String) {
         viewModelScope.launch {
-            moviesRepository.searchMovies(1, query).collect { moviesResult ->
+            moviesRepository.searchMovies(pageNumber, query).collect { moviesResult ->
+                if(pageNumber == 1)
+                    searchedMoviesList.clear()
+                moviesResult.data?.let {
+                    it.map { movie ->
+                        if (!searchedMoviesList.contains(movie))
+                            searchedMoviesList.add(movie)
+                    }
+                }
+                moviesResult.data = searchedMoviesList
                 moviesLiveData.value = moviesResult
             }
         }
@@ -34,6 +46,13 @@ class HomeViewModel @Inject constructor(
     fun fetchPopularMovies(pageNumber: Int) {
         viewModelScope.launch {
             moviesRepository.fetchMovies(pageNumber).collect { moviesResult ->
+                moviesResult.data?.let {
+                    it.map { movie ->
+                        if (!moviesList.contains(movie))
+                            moviesList.add(movie)
+                    }
+                }
+                moviesResult.data = moviesList
                 moviesLiveData.value = moviesResult
             }
         }
