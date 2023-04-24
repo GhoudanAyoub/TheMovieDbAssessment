@@ -8,15 +8,18 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import ghoudan.ayoub.common.utils.EndlessRecyclerViewScrollListener
 import ghoudan.ayoub.common.utils.MoviesVerticalItemDecoration
 import ghoudan.ayoub.local_models.models.Movies
+import ghoudan.ayoub.movieBest.MainActivity
 import ghoudan.ayoub.movieBest.databinding.FragmentHomeBinding
 import ghoudan.ayoub.networking.response.ResourceResponse
 import ghoudan.ayoub.ui_core.component.MovieListener
+import kotlin.math.roundToInt
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -70,8 +73,11 @@ class HomeFragment : Fragment(), MovieListener {
         homeFragmentViewModel.fetchPopularMovies(1)
         homeFragmentViewModel.movies.observe(viewLifecycleOwner) { moviesResult ->
             when (moviesResult) {
-                is ResourceResponse.Loading -> {}
+                is ResourceResponse.Loading -> {
+                    (requireActivity() as? MainActivity)?.showLoader()
+                }
                 is ResourceResponse.Error -> {
+                    (requireActivity() as? MainActivity)?.hideLoader()
                     Timber.e(moviesResult.error?.message)
                     Toast.makeText(
                         requireContext(),
@@ -80,8 +86,10 @@ class HomeFragment : Fragment(), MovieListener {
                     ).show()
                 }
                 is ResourceResponse.Success -> {
+                    (requireActivity() as? MainActivity)?.hideLoader()
                     moviesResult.data?.let {
                         moviesListAdapter.setMoviesList(it.sortedBy { it.title })
+                        moviesListAdapter.differ.submitList(it.sortedBy { it.title })
                     }
                 }
             }
@@ -96,14 +104,17 @@ class HomeFragment : Fragment(), MovieListener {
     private fun setupMoviesList() {
         val itemSpacing =
             resources.getDimension(ghoudan.ayoub.movieBest.ui_core.R.dimen.movie_item_spacing)
-        val itemDecoration = MoviesVerticalItemDecoration(itemSpacing.toInt())
+        val itemDecoration = MoviesVerticalItemDecoration(2, itemSpacing.roundToInt())
         val recyclerViewLayoutManager = GridLayoutManager(
             requireContext(),
             2
         )
         binding.movieRecycler.apply {
+            clipToPadding = false
+            clipChildren = false
             adapter = moviesListAdapter
             layoutManager = recyclerViewLayoutManager
+            setHasFixedSize(true)
             if (itemDecorationCount == 0) {
                 addItemDecoration(itemDecoration)
             }
@@ -126,7 +137,9 @@ class HomeFragment : Fragment(), MovieListener {
     }
 
     override fun onMovieClicked(movie: Movies) {
-
+        val action =
+            HomeFragmentDirections.actionNavigationHomeToNavigationDetails(movie.id)
+        findNavController().navigate(action)
     }
 
     override fun onFavoriteClicked(movie: Movies) {

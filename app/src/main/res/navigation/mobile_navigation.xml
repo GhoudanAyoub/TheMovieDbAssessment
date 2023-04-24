@@ -11,18 +11,27 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_navigation_home_to_navigation_notifications"
-            app:destination="@id/navigation_notifications" />
+            android:id="@+id/action_navigation_home_to_navigation_details"
+            app:destination="@id/fragment_details" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_favorite"
         android:name="ghoudan.ayoub.movieBest.ui.favorite.FavoriteFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_favorite" >
+        <action
+            android:id="@+id/action_navigation_favorite_to_fragment_details"
+            app:destination="@id/fragment_details" />
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="ghoudan.ayoub.movieBest.ui.notifications.NotificationsFragment"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/fragment_details"
+        android:name="ghoudan.ayoub.movieBest.ui.details.MovieDetailsFragment"
+        tools:layout="@layout/fragment_details" >
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
 </navigation>

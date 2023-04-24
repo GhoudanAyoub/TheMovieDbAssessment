@@ -2,18 +2,17 @@ package ghoudan.ayoub.networking.repository
 
 import androidx.room.withTransaction
 import dagger.Reusable
-import ghoudan.ayoub.networking.offline.NetworkHandler
 import ghoudan.ayoub.local_models.models.Movies
 import ghoudan.ayoub.networking.api.Api
 import ghoudan.ayoub.networking.dao.MoviesDAO
 import ghoudan.ayoub.networking.database.AppDataBase
 import ghoudan.ayoub.networking.model.mapper.toAppModel
+import ghoudan.ayoub.networking.offline.NetworkHandler
 import ghoudan.ayoub.networking.response.ResourceResponse
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
@@ -33,7 +32,9 @@ class MoviesRepositoryImpl @Inject constructor(
         return flow<ResourceResponse<List<Movies>>> {
             if (networkHandler.checkNetworkAvailability()) {
                 val result = api.searchMovies(pageNumber, query)
-                emit(ResourceResponse.Success(result.data.map { it.toAppModel() }))
+                val data = result.data.map { it.toAppModel() }
+                data.map { it.isFavorite = moviesDao.getMovie(it.id).isFavorite ?: false }
+                emit(ResourceResponse.Success(data))
             } else {
                 val data = moviesDao.searchMovies(pageNumber.times(30), query)
                 emit(ResourceResponse.Success(data))
@@ -50,7 +51,9 @@ class MoviesRepositoryImpl @Inject constructor(
                 db.withTransaction {
                     moviesDao.insertMovies(result.data.map { it.toAppModel() })
                 }
-                emit(ResourceResponse.Success(result.data.map { it.toAppModel() }))
+                val data = result.data.map { it.toAppModel() }
+                data.map { it.isFavorite = moviesDao.getMovie(it.id).isFavorite ?: false }
+                emit(ResourceResponse.Success(data))
             } else {
                 emit(ResourceResponse.Success(moviesDao.getMovies()))
             }
@@ -58,6 +61,7 @@ class MoviesRepositoryImpl @Inject constructor(
             emit(ResourceResponse.Error(exception))
         }.onStart { emit(ResourceResponse.Loading()) }
     }
+
     override fun getFavoriteMovies(): Flow<ResourceResponse<List<Movies>>> {
         return flow<ResourceResponse<List<Movies>>> {
             emit(ResourceResponse.Success(moviesDao.getFavoriteMovies()))
@@ -70,6 +74,9 @@ class MoviesRepositoryImpl @Inject constructor(
         return flow<ResourceResponse<Movies>> {
             if (networkHandler.checkNetworkAvailability()) {
                 val result = api.getMovieDetails(movieId)
+                val data = result.toAppModel()
+                data.isFavorite = moviesDao.getMovie(data.id).isFavorite ?: false
+                emit(ResourceResponse.Success(data))
                 emit(
                     ResourceResponse.Success(result.toAppModel())
                 )
