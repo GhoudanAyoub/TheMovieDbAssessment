@@ -1,6 +1,7 @@
 package ghoudan.ayoub.movieBest
 
 import android.os.Bundle
+import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -27,10 +28,22 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_dashboard
+                R.id.navigation_home, R.id.navigation_favorite
             )
         )
 //        setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    fun showLoader() {
+        if (binding.loaderOverlay?.visibility == View.GONE) {
+            binding.loaderOverlay?.visibility = View.VISIBLE
+        }
+    }
+
+    fun hideLoader() {
+        if (binding.loaderOverlay?.visibility == View.VISIBLE) {
+            binding.loaderOverlay?.visibility = View.GONE
+        }
     }
 }

@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ghoudan.ayoub.local_models.models.Movies
 import ghoudan.ayoub.movieBest.ui_core.databinding.ItemMovieBinding
@@ -22,6 +24,19 @@ class MoviesListAdapter(val movieListener: MovieListener) :
         const val TYPE_ITEM = 0
         const val TYPE_LOADER = 1
     }
+
+    private val differCallback = object : DiffUtil.ItemCallback<Movies>() {
+        override fun areItemsTheSame(oldItem: Movies, newItem: Movies): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        @SuppressLint("DiffUtilEquals")
+        override fun areContentsTheSame(oldItem: Movies, newItem: Movies): Boolean {
+            return oldItem == newItem
+        }
+
+    }
+    val differ = AsyncListDiffer(this, differCallback)
 
     @Suppress("UNCHECKED_CAST")
     override fun getFilter(): Filter {
@@ -76,7 +91,7 @@ class MoviesListAdapter(val movieListener: MovieListener) :
     }
 
     override fun onBindViewHolder(holder: MovieItemViewHolder, position: Int) {
-        val movieItem = moviesList[position]
+        val movieItem = differ.currentList[position]
         holder.bind(MovieView.MovieViewData(movieItem, movieListener))
     }
 
@@ -87,12 +102,20 @@ class MoviesListAdapter(val movieListener: MovieListener) :
     }
 
     override fun getItemCount(): Int {
-        return moviesList.size + 1
+        return differ.currentList.size
     }
 
     fun updateMovie(movie: Movies) {
-        moviesList.find { it.id == movie.id }?.let { _updatedMovie ->
-            notifyItemChanged(moviesList.indexOf(_updatedMovie))
+        differ.currentList.find { it.id == movie.id }?.let { _updatedMovie ->
+            notifyItemChanged(differ.currentList.indexOf(_updatedMovie))
         }
+    }
+    fun removeFromList(movie: Movies) {
+        val currentList = differ.currentList
+        currentList.find { it.id == movie.id }?.let { _updatedMovie ->
+            currentList.remove(_updatedMovie)
+            differ.submitList(currentList)
+        }
+        notifyDataSetChanged()
     }
 }

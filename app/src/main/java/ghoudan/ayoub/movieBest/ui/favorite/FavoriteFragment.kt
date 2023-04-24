@@ -8,24 +8,27 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import ghoudan.ayoub.common.utils.EndlessRecyclerViewScrollListener
 import ghoudan.ayoub.common.utils.MoviesVerticalItemDecoration
 import ghoudan.ayoub.local_models.models.Movies
-import ghoudan.ayoub.movieBest.databinding.FragmentDashboardBinding
+import ghoudan.ayoub.movieBest.databinding.FragmentFavoriteBinding
 import ghoudan.ayoub.movieBest.databinding.FragmentHomeBinding
+import ghoudan.ayoub.movieBest.ui.home.HomeFragmentDirections
 import ghoudan.ayoub.movieBest.ui.home.HomeViewModel
 import ghoudan.ayoub.movieBest.ui.home.MoviesListAdapter
 import ghoudan.ayoub.networking.response.ResourceResponse
 import ghoudan.ayoub.ui_core.component.MovieListener
+import kotlin.math.roundToInt
 import timber.log.Timber
 
 @AndroidEntryPoint
 class FavoriteFragment : Fragment(), MovieListener {
 
-    private lateinit var binding: FragmentDashboardBinding
+    private lateinit var binding: FragmentFavoriteBinding
     private val favoriteViewModel by viewModels<FavoriteViewModel>()
 
     private val moviesListAdapter: MoviesListAdapter by lazy {
@@ -37,7 +40,7 @@ class FavoriteFragment : Fragment(), MovieListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -64,13 +67,14 @@ class FavoriteFragment : Fragment(), MovieListener {
                 is ResourceResponse.Success -> {
                     moviesResult.data?.let {
                         moviesListAdapter.setMoviesList(it.sortedBy { it.title })
+                        moviesListAdapter.differ.submitList(it.sortedBy { it.title })
                     }
                 }
             }
         }
         favoriteViewModel.updatedMovie.observe(viewLifecycleOwner) { moviesResult ->
             moviesResult?.let { movie ->
-                moviesListAdapter.updateMovie(movie)
+                moviesListAdapter.removeFromList(movie)
             }
         }
     }
@@ -78,14 +82,17 @@ class FavoriteFragment : Fragment(), MovieListener {
     private fun setupMoviesList() {
         val itemSpacing =
             resources.getDimension(ghoudan.ayoub.movieBest.ui_core.R.dimen.movie_item_spacing)
-        val itemDecoration = MoviesVerticalItemDecoration(itemSpacing.toInt())
+        val itemDecoration = MoviesVerticalItemDecoration(2, itemSpacing.roundToInt())
         val recyclerViewLayoutManager = GridLayoutManager(
             requireContext(),
             2
         )
         binding.movieRecycler.apply {
+            clipToPadding = false
+            clipChildren = false
             adapter = moviesListAdapter
             layoutManager = recyclerViewLayoutManager
+            setHasFixedSize(true)
             if (itemDecorationCount == 0) {
                 addItemDecoration(itemDecoration)
             }
@@ -93,7 +100,9 @@ class FavoriteFragment : Fragment(), MovieListener {
     }
 
     override fun onMovieClicked(movie: Movies) {
-
+        val action =
+            FavoriteFragmentDirections.actionNavigationFavoriteToFragmentDetails(movie.id)
+        findNavController().navigate(action)
     }
 
     override fun onFavoriteClicked(movie: Movies) {

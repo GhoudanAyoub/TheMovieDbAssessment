@@ -5,6 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/nav_view"
+        android:background="@color/content_softGrey" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         style="@style/MainNavigation"
@@ -38,4 +44,27 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/mobile_navigation" />
 
+    <FrameLayout
+        android:id="@+id/loaderOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="#2E11314F"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:visibility="gone">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@color/content_white"
+            app:cardCornerRadius="50dp">
+            <ghoudan.ayoub.ui_core.loaders.LoaderView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </androidx.cardview.widget.CardView>
+
+    </FrameLayout>
 </RelativeLayout>

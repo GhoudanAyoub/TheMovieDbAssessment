@@ -45,4 +45,6 @@ dependencies {
     kapt(Deps.Hilt.hilt_compiler)
 
     implementation(Deps.Timber.timber)
+    implementation(Deps.Glide.glide)
+    kapt(Deps.Glide.compiler)
 }
