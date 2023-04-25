@@ -53,6 +53,8 @@ object Deps {
             object Espresso {
                 private const val version = "3.4.0"
                 const val espressoCore = "androidx.test.espresso:espresso-core:$version"
+                const val espressoContrib = "androidx.test.espresso:espresso-contrib:$version"
+                const val espressoResource = "androidx.test.espresso:espresso-idling-resource:$version"
             }
         }
     }

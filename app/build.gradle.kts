@@ -40,6 +40,8 @@ dependencies {
     testImplementation(Deps.Test.JUnit.junit)
     androidTestImplementation(Deps.Androidx.Test.JUnit.jUnit)
     androidTestImplementation(Deps.Androidx.Test.Espresso.espressoCore)
+    androidTestImplementation(Deps.Androidx.Test.Espresso.espressoContrib)
+    implementation(Deps.Androidx.Test.Espresso.espressoResource)
 
     implementation(Deps.Hilt.hilt)
     kapt(Deps.Hilt.hilt_compiler)
