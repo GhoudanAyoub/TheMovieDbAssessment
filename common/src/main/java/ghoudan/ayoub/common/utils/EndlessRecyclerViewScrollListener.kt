@@ -5,6 +5,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
+/**
+ * improved version of:
+ * https://gist.github.com/nesquena/d09dc68ff07e845cc622
+ */
 abstract class EndlessRecyclerViewScrollListener(
     private val layoutManager: RecyclerView.LayoutManager
 ) : RecyclerView.OnScrollListener() {

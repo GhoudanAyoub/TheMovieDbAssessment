@@ -2,18 +2,25 @@ package ghoudan.ayoub.movieBest
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ghoudan.ayoub.movieBest.databinding.ActivityMainBinding
+import ghoudan.ayoub.movieBest.ui.favorite.FavoriteViewModel
+import ghoudan.ayoub.movieBest.ui.home.HomeViewModel
+
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val favoriteViewModel by viewModels<FavoriteViewModel>()
+    private val homeFragmentViewModel by viewModels<HomeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,15 +31,9 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_favorite
-            )
-        )
-//        setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        favoriteViewModel.getFavoriteMovies()
+        homeFragmentViewModel.fetchPopularMovies(1)
     }
 
     fun showLoader() {
