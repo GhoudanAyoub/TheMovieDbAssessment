@@ -41,7 +41,7 @@ class SimpleTest {
         onView(withId(R.id.movieRecycler))
             .perform(
                 RecyclerViewActions.actionOnItemAtPosition<MoviesListAdapter.MovieItemViewHolder>(
-                    3,
+                    2,
                     ViewActions.click()
                 )
             )

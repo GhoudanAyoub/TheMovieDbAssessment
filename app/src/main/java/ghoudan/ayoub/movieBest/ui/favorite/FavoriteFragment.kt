@@ -26,8 +26,8 @@ class FavoriteFragment : Fragment(), MovieListener {
     private lateinit var binding: FragmentFavoriteBinding
     private val favoriteViewModel by activityViewModels<FavoriteViewModel>()
 
-    private val moviesListAdapter: MoviesListAdapter by lazy {
-        MoviesListAdapter(this)
+    private val favoriteListAdapter: FavoriteListAdapter by lazy {
+        FavoriteListAdapter(this)
     }
 
     override fun onCreateView(
@@ -61,7 +61,7 @@ class FavoriteFragment : Fragment(), MovieListener {
                 }
                 is ResourceResponse.Success -> {
                     moviesResult.data?.let {
-                        moviesListAdapter.differ.submitList(it.sortedBy { it.title })
+                        favoriteListAdapter.differ.submitList(it.sortedBy { it.title })
                     }
                 }
             }
@@ -83,7 +83,7 @@ class FavoriteFragment : Fragment(), MovieListener {
             2
         )
         binding.movieRecycler.apply {
-            adapter = moviesListAdapter
+            adapter = favoriteListAdapter
             layoutManager = recyclerViewLayoutManager
             setHasFixedSize(true)
             if (itemDecorationCount == 0) {
