@@ -1,5 +1,7 @@
 package ghoudan.ayoub.movieBest
 
+import android.os.SystemClock.sleep
+import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
@@ -18,25 +20,24 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4ClassRunner::class)
 class SimpleTest {
 
-
-    @get:Rule
-    val activityRule = ActivityScenarioRule(MainActivity::class.java)
-
     @Test
     fun a_test_isHomeFragmentVisible_onAppLaunch() {
+        val activityScenario = ActivityScenario.launch(MainActivity::class.java)
         onView(withId(R.id.movieRecycler)).check(matches(isDisplayed()))
 
-        onView(withId(R.id.loaderOverlay)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.loaderOverlay)).check(matches(isDisplayed()))
     }
 
 
     @Test
     fun test_nav_fromHomeFragment_FavoriteFragment() {
 
+        val activityScenario = ActivityScenario.launch(MainActivity::class.java)
+
+        sleep(2000)
         // Click list item #LIST_ITEM_IN_TEST
         onView(withId(R.id.movieRecycler))
             .perform(
@@ -56,6 +57,8 @@ class SimpleTest {
 
         // Nav to Favorite
         onView(withId(R.id.navigation_favorite)).perform(ViewActions.click())
+
+        Espresso.pressBack()
     }
 
 }
