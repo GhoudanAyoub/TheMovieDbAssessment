@@ -33,7 +33,6 @@ class MoviesRepositoryImpl @Inject constructor(
             if (networkHandler.checkNetworkAvailability()) {
                 val result = api.searchMovies(pageNumber, query)
                 val data = result.data.map { it.toAppModel() }
-                data.map { it.isFavorite = moviesDao.getMovie(it.id).isFavorite ?: false }
                 emit(ResourceResponse.Success(data))
             } else {
                 val data = moviesDao.searchMovies(pageNumber.times(30), query)
@@ -52,7 +51,10 @@ class MoviesRepositoryImpl @Inject constructor(
                     moviesDao.insertMovies(result.data.map { it.toAppModel() })
                 }
                 val data = result.data.map { it.toAppModel() }
-                data.map { it.isFavorite = moviesDao.getMovie(it.id).isFavorite ?: false }
+                data.map {
+                    val currentMovie = moviesDao.getMovie(it.id)
+                    it.isFavorite = currentMovie.isFavorite
+                }
                 emit(ResourceResponse.Success(data))
             } else {
                 emit(ResourceResponse.Success(moviesDao.getMovies()))
@@ -64,10 +66,12 @@ class MoviesRepositoryImpl @Inject constructor(
 
     override fun getFavoriteMovies(): Flow<ResourceResponse<List<Movies>>> {
         return flow<ResourceResponse<List<Movies>>> {
-            emit(ResourceResponse.Success(moviesDao.getFavoriteMovies()))
+            val data = moviesDao.getFavoriteMovies()
+            emit(ResourceResponse.Success(data))
         }.catch { exception ->
             emit(ResourceResponse.Error(exception))
         }.onStart { emit(ResourceResponse.Loading()) }
+            .flowOn(Dispatchers.IO)
     }
 
     override fun fetchMovieDetails(movieId: Int): Flow<ResourceResponse<Movies>> {
@@ -75,11 +79,7 @@ class MoviesRepositoryImpl @Inject constructor(
             if (networkHandler.checkNetworkAvailability()) {
                 val result = api.getMovieDetails(movieId)
                 val data = result.toAppModel()
-                data.isFavorite = moviesDao.getMovie(data.id).isFavorite ?: false
                 emit(ResourceResponse.Success(data))
-                emit(
-                    ResourceResponse.Success(result.toAppModel())
-                )
             } else {
                 val data = moviesDao.getMovie(movieId)
                 emit(ResourceResponse.Success(data))

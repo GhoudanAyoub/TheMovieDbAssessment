@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,9 +25,12 @@ import timber.log.Timber
 @AndroidEntryPoint
 class HomeFragment : Fragment(), MovieListener {
 
+    private var currentP: Int = 1
     private var searchQuery: String = ""
     private lateinit var binding: FragmentHomeBinding
-    private val homeFragmentViewModel by viewModels<HomeViewModel>()
+    private val homeFragmentViewModel by activityViewModels<HomeViewModel>()
+
+    private var moviesList = arrayListOf<Movies>()
 
     private val moviesListAdapter: MoviesListAdapter by lazy {
         MoviesListAdapter(this)
@@ -47,20 +50,18 @@ class HomeFragment : Fragment(), MovieListener {
 
         binding.movieSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
+                clearMoviesList()
+                currentP = 1
                 searchQuery = query
-                if (query.isEmpty())
-                    homeFragmentViewModel.fetchPopularMovies(1)
-                else
-                    homeFragmentViewModel.filterMovies(1,query)
+                homeFragmentViewModel.filterMovies(currentP, query)
                 return true
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
+                clearMoviesList()
+                currentP = 1
                 searchQuery = newText
-                if (newText.isEmpty())
-                    homeFragmentViewModel.fetchPopularMovies(1)
-                else
-                    homeFragmentViewModel.filterMovies(1,newText)
+                homeFragmentViewModel.filterMovies(currentP, newText)
                 return true
             }
         })
@@ -86,17 +87,16 @@ class HomeFragment : Fragment(), MovieListener {
                     ).show()
                 }
                 is ResourceResponse.Success -> {
-                    (requireActivity() as? MainActivity)?.hideLoader()
                     moviesResult.data?.let {
-                        moviesListAdapter.setMoviesList(it.sortedBy { it.title })
-                        moviesListAdapter.differ.submitList(it.sortedBy { it.title })
+                        setMoviesList(it.sortedBy { it.title })
                     }
                 }
             }
         }
-        homeFragmentViewModel.updatedMovie.observe(viewLifecycleOwner) { moviesResult ->
-            moviesResult?.let { movie ->
-                moviesListAdapter.updateMovie(movie)
+        homeFragmentViewModel.updatedMovie.observe(viewLifecycleOwner) { result ->
+            result?.let { result ->
+                if (result)
+                    homeFragmentViewModel.fetchPopularMovies(currentP)
             }
         }
     }
@@ -126,6 +126,7 @@ class HomeFragment : Fragment(), MovieListener {
                             take: Int,
                             view: RecyclerView
                         ) {
+                            currentP = page
                             if (searchQuery.isEmpty())
                                 homeFragmentViewModel.fetchPopularMovies(page)
                             else
@@ -146,4 +147,14 @@ class HomeFragment : Fragment(), MovieListener {
         homeFragmentViewModel.handleFavoriteMovie(movie)
     }
 
+    fun setMoviesList(movies: List<Movies>) {
+        moviesList.addAll(movies)
+        moviesListAdapter.differ.submitList(moviesList.distinctBy { it.id })
+        moviesListAdapter.notifyDataSetChanged()
+        (requireActivity() as? MainActivity)?.hideLoader()
+    }
+
+    fun clearMoviesList() {
+        this.moviesList.clear()
+    }
 }

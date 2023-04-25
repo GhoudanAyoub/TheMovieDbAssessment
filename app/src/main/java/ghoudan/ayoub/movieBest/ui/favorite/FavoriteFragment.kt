@@ -5,20 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
-import ghoudan.ayoub.common.utils.EndlessRecyclerViewScrollListener
 import ghoudan.ayoub.common.utils.MoviesVerticalItemDecoration
 import ghoudan.ayoub.local_models.models.Movies
 import ghoudan.ayoub.movieBest.databinding.FragmentFavoriteBinding
-import ghoudan.ayoub.movieBest.databinding.FragmentHomeBinding
-import ghoudan.ayoub.movieBest.ui.home.HomeFragmentDirections
-import ghoudan.ayoub.movieBest.ui.home.HomeViewModel
 import ghoudan.ayoub.movieBest.ui.home.MoviesListAdapter
 import ghoudan.ayoub.networking.response.ResourceResponse
 import ghoudan.ayoub.ui_core.component.MovieListener
@@ -29,7 +24,7 @@ import timber.log.Timber
 class FavoriteFragment : Fragment(), MovieListener {
 
     private lateinit var binding: FragmentFavoriteBinding
-    private val favoriteViewModel by viewModels<FavoriteViewModel>()
+    private val favoriteViewModel by activityViewModels<FavoriteViewModel>()
 
     private val moviesListAdapter: MoviesListAdapter by lazy {
         MoviesListAdapter(this)
@@ -66,15 +61,15 @@ class FavoriteFragment : Fragment(), MovieListener {
                 }
                 is ResourceResponse.Success -> {
                     moviesResult.data?.let {
-                        moviesListAdapter.setMoviesList(it.sortedBy { it.title })
                         moviesListAdapter.differ.submitList(it.sortedBy { it.title })
                     }
                 }
             }
         }
-        favoriteViewModel.updatedMovie.observe(viewLifecycleOwner) { moviesResult ->
-            moviesResult?.let { movie ->
-                moviesListAdapter.removeFromList(movie)
+        favoriteViewModel.updatedMovie.observe(viewLifecycleOwner) { result ->
+            result?.let { result ->
+                if (result)
+                    favoriteViewModel.getFavoriteMovies()
             }
         }
     }
@@ -88,8 +83,6 @@ class FavoriteFragment : Fragment(), MovieListener {
             2
         )
         binding.movieRecycler.apply {
-            clipToPadding = false
-            clipChildren = false
             adapter = moviesListAdapter
             layoutManager = recyclerViewLayoutManager
             setHasFixedSize(true)

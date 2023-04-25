@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ghoudan.ayoub.local_models.models.Movies
+import ghoudan.ayoub.networking.repository.MoviesRepository
 import ghoudan.ayoub.networking.repository.MoviesRepositoryImpl
 import ghoudan.ayoub.networking.response.ResourceResponse
 import javax.inject.Inject
@@ -20,8 +21,8 @@ class FavoriteViewModel @Inject constructor(
     val movies: LiveData<ResourceResponse<List<Movies>>> = moviesLiveData
 
 
-    private var updatedMovieLiveData: MutableLiveData<Movies> = MutableLiveData()
-    val updatedMovie: LiveData<Movies> = updatedMovieLiveData
+    private var updatedMovieLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    val updatedMovie: LiveData<Boolean> = updatedMovieLiveData
 
     fun getFavoriteMovies() {
         viewModelScope.launch {
@@ -34,7 +35,7 @@ class FavoriteViewModel @Inject constructor(
         viewModelScope.launch {
             moviesRepository.addMovieToFavorites(movie)
                 .collect {
-                    updatedMovieLiveData.value = movie
+                    updatedMovieLiveData.value = it
                 }
         }
     }

@@ -3,9 +3,11 @@ package ghoudan.ayoub.movieBest.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ghoudan.ayoub.local_models.models.Movies
+import ghoudan.ayoub.networking.repository.MoviesRepository
 import ghoudan.ayoub.networking.repository.MoviesRepositoryImpl
 import ghoudan.ayoub.networking.response.ResourceResponse
 import javax.inject.Inject
@@ -22,38 +24,43 @@ class HomeViewModel @Inject constructor(
     val movies: LiveData<ResourceResponse<List<Movies>>> = moviesLiveData
 
 
-    private var updatedMovieLiveData: MutableLiveData<Movies> = MutableLiveData()
-    val updatedMovie: LiveData<Movies> = updatedMovieLiveData
+    private var updatedMovieLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    val updatedMovie: LiveData<Boolean> = updatedMovieLiveData
 
     fun filterMovies(
-        pageNumber: Int,query: String) {
+        pageNumber: Int, query: String
+    ) {
         viewModelScope.launch {
+            if(query.isNotEmpty())
             moviesRepository.searchMovies(pageNumber, query).collect { moviesResult ->
-                if(pageNumber == 1)
+                if (pageNumber == 1)
                     searchedMoviesList.clear()
-                moviesResult.data?.let {
-                    it.map { movie ->
-                        if (!searchedMoviesList.contains(movie))
-                            searchedMoviesList.add(movie)
+                searchedMoviesList.addAll(moviesResult.data ?: listOf())
+                moviesRepository.getFavoriteMovies().collect {
+                    it.data?.let { favoriteMovies ->
+                        moviesResult.data?.map { movie ->
+                            movie.isFavorite = favoriteMovies.firstOrNull { movie.id == it.id }!=null
+                        }
                     }
+                    moviesResult.data = searchedMoviesList
+                    moviesLiveData.value = moviesResult
                 }
-                moviesResult.data = searchedMoviesList
-                moviesLiveData.value = moviesResult
             }
+            else
+                fetchPopularMovies(pageNumber)
         }
     }
 
     fun fetchPopularMovies(pageNumber: Int) {
         viewModelScope.launch {
             moviesRepository.fetchMovies(pageNumber).collect { moviesResult ->
-                moviesResult.data?.let {
-                    it.map { movie ->
-                        if (!moviesList.contains(movie))
-                            moviesList.add(movie)
+                moviesRepository.getFavoriteMovies().asLiveData().value?.data?.let { favoriteMovies ->
+                        moviesResult.data?.map { movie ->
+                            movie.isFavorite = favoriteMovies.firstOrNull { movie.id == it.id }!=null
+                        }
                     }
-                }
-                moviesResult.data = moviesList
-                moviesLiveData.value = moviesResult
+                    moviesLiveData.value = moviesResult
+
             }
         }
     }
@@ -62,7 +69,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             moviesRepository.addMovieToFavorites(movie)
                 .collect {
-                    updatedMovieLiveData.value = movie
+                    updatedMovieLiveData.value = it
                 }
         }
     }
