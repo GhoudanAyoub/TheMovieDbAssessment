@@ -30,7 +30,6 @@ class HomeFragment : Fragment(), MovieListener {
     private lateinit var binding: FragmentHomeBinding
     private val homeFragmentViewModel by activityViewModels<HomeViewModel>()
 
-    private var moviesList = arrayListOf<Movies>()
 
     private val moviesListAdapter: MoviesListAdapter by lazy {
         MoviesListAdapter(this)
@@ -50,7 +49,7 @@ class HomeFragment : Fragment(), MovieListener {
 
         binding.movieSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                clearMoviesList()
+                moviesListAdapter. clearMoviesList()
                 currentP = 1
                 searchQuery = query
                 homeFragmentViewModel.filterMovies(currentP, query)
@@ -58,7 +57,7 @@ class HomeFragment : Fragment(), MovieListener {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                clearMoviesList()
+                moviesListAdapter. clearMoviesList()
                 currentP = 1
                 searchQuery = newText
                 homeFragmentViewModel.filterMovies(currentP, newText)
@@ -88,7 +87,8 @@ class HomeFragment : Fragment(), MovieListener {
                 }
                 is ResourceResponse.Success -> {
                     moviesResult.data?.let {
-                        setMoviesList(it.sortedBy { it.title })
+                        moviesListAdapter.setMoviesList(it.sortedBy { it.title })
+                        (requireActivity() as? MainActivity)?.hideLoader()
                     }
                 }
             }
@@ -147,14 +147,4 @@ class HomeFragment : Fragment(), MovieListener {
         homeFragmentViewModel.handleFavoriteMovie(movie)
     }
 
-    fun setMoviesList(movies: List<Movies>) {
-        moviesList.addAll(movies)
-        moviesListAdapter.differ.submitList(moviesList.distinctBy { it.id })
-        moviesListAdapter.notifyDataSetChanged()
-        (requireActivity() as? MainActivity)?.hideLoader()
-    }
-
-    fun clearMoviesList() {
-        this.moviesList.clear()
-    }
 }

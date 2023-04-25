@@ -37,8 +37,10 @@ dependencies {
     implementation(Deps.Androidx.Navigation.navigationUiKtx)
     implementation(Deps.Androidx.Lifecycle.liveDataKtx)
 
-    testImplementation(Deps.Test.JUnit.junit)
     androidTestImplementation(Deps.Androidx.Test.JUnit.jUnit)
+    androidTestImplementation(Deps.Androidx.Test.JUnit.jUnitrunner)
+    androidTestImplementation(Deps.Androidx.Test.JUnit.jUnitext)
+    androidTestImplementation(Deps.Androidx.Test.JUnit.jUnitcore)
     androidTestImplementation(Deps.Androidx.Test.Espresso.espressoCore)
     androidTestImplementation(Deps.Androidx.Test.Espresso.espressoContrib)
     implementation(Deps.Androidx.Test.Espresso.espressoResource)

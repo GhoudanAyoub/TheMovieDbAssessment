@@ -48,6 +48,11 @@ object Deps {
             object JUnit {
                 private const val version = "1.1.3"
                 const val jUnit = "androidx.test.ext:junit:$version"
+
+                private const val androidx_test = "1.1.0"
+                const val jUnitrunner = "androidx.test:runner:$androidx_test"
+                const val jUnitcore = "androidx.test:core:$androidx_test"
+                const val jUnitext = "androidx.test.ext:junit-ktx:$androidx_test"
             }
 
             object Espresso {
