@@ -46,10 +46,17 @@ class FavoriteListAdapter(val movieListener: MovieListener) :
     }
 
     override fun onBindViewHolder(holder: MovieItemViewHolder, position: Int) {
-        holder.bind(differ.currentList[position])
+        holder.bind(moviesList[position])
     }
 
     override fun getItemCount(): Int {
-        return differ.currentList.size
+        return moviesList.size
+    }
+
+    fun setList(movies:List<Movies>){
+        moviesList.clear()
+        moviesList.addAll(movies)
+        notifyDataSetChanged()
+
     }
 }

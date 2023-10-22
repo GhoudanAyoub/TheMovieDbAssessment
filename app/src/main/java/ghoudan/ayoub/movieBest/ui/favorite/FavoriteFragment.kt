@@ -61,7 +61,7 @@ class FavoriteFragment : Fragment(), MovieListener {
                 }
                 is ResourceResponse.Success -> {
                     moviesResult.data?.let {
-                        favoriteListAdapter.differ.submitList(it.sortedBy { it.title })
+                        favoriteListAdapter.setList(it)
                     }
                 }
             }

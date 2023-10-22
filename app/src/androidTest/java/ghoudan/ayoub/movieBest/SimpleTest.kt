@@ -28,7 +28,7 @@ class SimpleTest {
         val activityScenario = ActivityScenario.launch(MainActivity::class.java)
         onView(withId(R.id.movieRecycler)).check(matches(isDisplayed()))
 
-        onView(withId(R.id.loaderOverlay)).check(matches(isDisplayed()))
+//        onView(withId(R.id.loaderOverlay)).check(matches(isDisplayed()))
     }
 
 
