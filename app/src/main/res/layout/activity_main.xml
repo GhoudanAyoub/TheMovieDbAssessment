@@ -61,7 +61,7 @@
             android:layout_gravity="center"
             android:background="@color/content_white"
             app:cardCornerRadius="50dp">
-            <ghoudan.ayoub.ui_core.loaders.LoaderView
+            <com.gws.ui_core.loaders.LoaderView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
         </androidx.cardview.widget.CardView>

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="ghoudan.ayoub.movieBest.ui.home.HomeFragment"
+        android:name="com.gws.ussd.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/navigation_favorite"
-        android:name="ghoudan.ayoub.movieBest.ui.favorite.FavoriteFragment"
+        android:name="com.gws.ussd.ui.favorite.FavoriteFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_favorite" >
         <action
@@ -27,7 +27,7 @@
 
     <fragment
         android:id="@+id/fragment_details"
-        android:name="ghoudan.ayoub.movieBest.ui.details.MovieDetailsFragment"
+        android:name="com.gws.ussd.ui.details.MovieDetailsFragment"
         tools:layout="@layout/fragment_details" >
         <argument
             android:name="id"

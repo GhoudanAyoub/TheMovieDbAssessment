@@ -1,4 +1,4 @@
-import  ghoudan.ayoub.movieBest.Deps
+import  com.gws.ussd.Deps
 
 plugins {
     id("org.jetbrains.kotlin.android")

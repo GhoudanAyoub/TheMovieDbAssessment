@@ -1,4 +1,4 @@
-import ghoudan.ayoub.movieBest.Deps
+import com.gws.ussd.Deps
 
 plugins {
     id("dagger.hilt.android.plugin")
@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "ghoudan.ayoub.movieBest.networking"
+    namespace = "com.gws.ussd.networking"
 }
 dependencies {
 

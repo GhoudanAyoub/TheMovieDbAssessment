@@ -1,4 +1,4 @@
-import ghoudan.ayoub.movieBest.Deps
+import com.gws.ussd.Deps
 
 plugins {
     id("dagger.hilt.android.plugin")
@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "ghoudan.ayoub.movieBest.ui_core"
+    namespace = "com.gws.ussd.ui_core"
 }
 
 dependencies {
