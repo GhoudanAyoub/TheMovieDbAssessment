@@ -17,6 +17,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -111,7 +112,7 @@ class HomeFragment : Fragment() {
             )
         } catch (e: SecurityException) {
             // Permission denied; request the permission
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE)
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_NUMBERS)
                 != PackageManager.PERMISSION_GRANTED
             ) {
                 // You can show a rationale for needing the permission here
@@ -133,7 +134,13 @@ class HomeFragment : Fragment() {
             // Request the permission when the user clicks "OK"
 
             // User has previously denied the permission without explanation, provide an option to open settings
-            openAppSettings(context)
+
+            ActivityCompat.requestPermissions(
+                requireActivity(), // Cast the context to an Activity
+                arrayOf(Manifest.permission.READ_PHONE_NUMBERS),
+                123
+            )
+//            openAppSettings(context)
             dialog.dismiss()
         }
 
