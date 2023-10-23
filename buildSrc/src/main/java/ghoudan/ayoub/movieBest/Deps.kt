@@ -43,6 +43,18 @@ object Deps {
             const val processor = "androidx.room:room-compiler:$version"
             const val room_ktx = "androidx.room:room-ktx:$version"
         }
+        object libphonenumber {
+            private const val version = "8.12.57"
+            const val libphonenumber = "io.michaelrocks:libphonenumber-android:$version"
+        }
+
+        object phoneApi {
+            private const val version = "8.12.57"
+            const val libphonenumber = "io.michaelrocks:libphonenumber-android:$version"
+            const val play_services_auth = "com.google.android.gms:play-services-auth:20.2.0"
+            const val play_services_auth_api_phone = "com.google.android.gms:play-services-auth-api-phone:18.0.1 "
+        }
+
 
         object Test {
             object JUnit {

@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"
+        android:maxSdkVersion="29" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
 
     <application
         android:name=".MoviesApp"
@@ -15,6 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.TheMovieDbAssessment"
+        android:exported="true"
         android:usesCleartextTraffic="true">
 
         <activity
@@ -28,6 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".ui.home.UssdBackgroundService" />
     </application>
 
 </manifest>

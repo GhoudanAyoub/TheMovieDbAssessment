@@ -18,7 +18,7 @@ class FavoriteListAdapter(val movieListener: MovieListener) :
     inner class MovieItemViewHolder(private val movieItemView: ItemMovieBinding) :
         RecyclerView.ViewHolder(movieItemView.root) {
         fun bind(data: Movies) {
-            movieItemView.root.bind(MovieView.MovieViewData(data, movieListener))
+//            movieItemView.root.bind(MovieView.MovieViewData(data, movieListener))
         }
     }
 

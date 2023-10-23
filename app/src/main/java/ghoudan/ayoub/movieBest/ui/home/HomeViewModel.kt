@@ -1,76 +1,69 @@
 package ghoudan.ayoub.movieBest.ui.home
 
+import android.os.Handler
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import chari.groupewib.com.networking.handler.UssdHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ghoudan.ayoub.local_models.models.Movies
-import ghoudan.ayoub.networking.repository.MoviesRepository
-import ghoudan.ayoub.networking.repository.MoviesRepositoryImpl
+import ghoudan.ayoub.local_models.models.Ussd
+import ghoudan.ayoub.networking.repository.Synchronizer
 import ghoudan.ayoub.networking.response.ResourceResponse
 import javax.inject.Inject
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val moviesRepository: MoviesRepositoryImpl
+    val synchronizer: Synchronizer,
+    val ussdHandler: UssdHandler
 ) : ViewModel() {
 
-    private var moviesList = arrayListOf<Movies>()
-    private var searchedMoviesList = arrayListOf<Movies>()
-    private var moviesLiveData: MutableLiveData<ResourceResponse<List<Movies>>> = MutableLiveData()
-    val movies: LiveData<ResourceResponse<List<Movies>>> = moviesLiveData
+    private var UssdLiveData: MutableLiveData<ResourceResponse<List<Ussd>>> = MutableLiveData()
+    val fakeUssd: LiveData<ResourceResponse<List<Ussd>>> = UssdLiveData
 
+    val handler = Handler()
+    private val delayMillis = 2500L  // 2.5 seconds
 
-    private var updatedMovieLiveData: MutableLiveData<Boolean> = MutableLiveData()
-    val updatedMovie: LiveData<Boolean> = updatedMovieLiveData
+    private val backgroundInfoRunnable = object : Runnable {
+        override fun run() {
+            getBackgroundInfo()
+            handler.postDelayed(this, delayMillis)
+        }
+    }
 
-    fun filterMovies(
-        pageNumber: Int, query: String
-    ) {
+    fun startBackgroundInfo() {
+        handler.postDelayed(backgroundInfoRunnable, delayMillis)
+    }
+
+    fun clearList(){
+        ussdHandler.clearUssd()
+    }
+
+    /** loadFakeUssd  **/
+    fun loadFakeUssd(phoneNumber: String) {
+        synchronizer.createFakeUssdDataList(phoneNumber)
+
+        Timber.e("Sync: HomeViewModel started ${synchronizer.fakeUssdList.size}")
+    }
+
+    /** run background thread function**/
+    fun getBackgroundInfo() {
         viewModelScope.launch {
-            if(query.isNotEmpty())
-            moviesRepository.searchMovies(pageNumber, query).collect { moviesResult ->
-                if (pageNumber == 1)
-                    searchedMoviesList.clear()
-                searchedMoviesList.addAll(moviesResult.data ?: listOf())
-                moviesRepository.getFavoriteMovies().collect {
-                    it.data?.let { favoriteMovies ->
-                        moviesResult.data?.map { movie ->
-                            movie.isFavorite = favoriteMovies.firstOrNull { movie.id == it.id }!=null
-                        }
-                    }
-                    moviesResult.data = searchedMoviesList
-                    moviesLiveData.value = moviesResult
+            UssdLiveData.value = ResourceResponse.Loading()
+            ussdHandler.getOrCreateUssd().apply {
+                if (this.ussds?.isEmpty() == true)
+                    UssdLiveData.value = ResourceResponse.Error(Throwable("Error"))
+                else this.ussds?.let {
+                    Timber.e("Sync: getBackgroundInfo started ${it.size}" +
+                            " ${it.filter { it.etat == "1" }.size} "
+                    )
+                    UssdLiveData.value = ResourceResponse.Success(it)
+
                 }
             }
-            else
-                fetchPopularMovies(pageNumber)
         }
     }
 
-    fun fetchPopularMovies(pageNumber: Int) {
-        viewModelScope.launch {
-            moviesRepository.fetchMovies(pageNumber).collect { moviesResult ->
-                moviesRepository.getFavoriteMovies().asLiveData().value?.data?.let { favoriteMovies ->
-                        moviesResult.data?.map { movie ->
-                            movie.isFavorite = favoriteMovies.firstOrNull { movie.id == it.id }!=null
-                        }
-                    }
-                    moviesLiveData.value = moviesResult
-
-            }
-        }
-    }
-
-    fun handleFavoriteMovie(movie: Movies) {
-        viewModelScope.launch {
-            moviesRepository.addMovieToFavorites(movie)
-                .collect {
-                    updatedMovieLiveData.value = it
-                }
-        }
-    }
 }

@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/content_white">
     <LinearLayout
+        android:id="@+id/ussdInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
@@ -17,15 +18,34 @@
             android:layout_marginBottom="16dp"
             android:hint="numéro de téléphone"
             android:importantForAutofill="no"
-            android:textAlignment="viewStart" />
+            android:inputType="phone"
+            android:textAlignment="viewStart"
+            android:textColor="#000000"
+            android:textColorHint="#000000" />
 
         <Button
             android:id="@+id/valider"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="valider"
             android:backgroundTint="@color/brand_primary"
-            android:textColor="@color/content_white"/>
+            android:imeOptions="actionDone"
+            android:text="valider"
+            android:textColor="@color/content_white" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ussdLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ussdRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:overScrollMode="never"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
     </LinearLayout>
 
 </RelativeLayout>

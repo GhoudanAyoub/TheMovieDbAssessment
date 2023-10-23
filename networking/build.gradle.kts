@@ -14,11 +14,13 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":local_models"))
 
+    implementation("androidx.work:work-runtime-ktx:2.5.0")
     implementation(Deps.Androidx.CoreKtx.coreKtx)
     implementation(Deps.Androidx.AppCompat.appCompat)
     implementation(Deps.Google.Material.material)
 
     implementation(Deps.Hilt.hilt)
+    implementation("androidx.hilt:hilt-common:1.0.0")
     kapt(Deps.Hilt.hilt_compiler)
 
     implementation(Deps.Networking.logging_interceptor)

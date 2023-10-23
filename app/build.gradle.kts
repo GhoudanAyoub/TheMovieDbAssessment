@@ -45,10 +45,14 @@ dependencies {
     androidTestImplementation(Deps.Androidx.Test.Espresso.espressoContrib)
     implementation(Deps.Androidx.Test.Espresso.espressoResource)
 
+    implementation( "androidx.work:work-runtime-ktx:2.7.1")
     implementation(Deps.Hilt.hilt)
     kapt(Deps.Hilt.hilt_compiler)
 
     implementation(Deps.Timber.timber)
     implementation(Deps.Glide.glide)
+    implementation(Deps.Androidx.libphonenumber.libphonenumber)
+    implementation(Deps.Androidx.phoneApi.play_services_auth)
+    implementation(Deps.Androidx.phoneApi.play_services_auth_api_phone)
     kapt(Deps.Glide.compiler)
 }
