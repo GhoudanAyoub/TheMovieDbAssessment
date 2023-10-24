@@ -6,7 +6,7 @@ plugins {
     id("kotlin-kapt")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("androidx.navigation.safeargs.kotlin")
-//    id("com.google.gms.google-services")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -62,6 +62,6 @@ dependencies {
 
     implementation( "com.github.romellfudi.VoIpUSSD:kotlin-ussd-library:1.4.a")
 
-//    implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
-//    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
+    implementation("com.google.firebase:firebase-config-ktx")
 }

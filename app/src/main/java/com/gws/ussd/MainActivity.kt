@@ -21,20 +21,28 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import com.gws.networking.providers.CurrentServerProvider
+import com.gws.networking.providers.CurrentUserProvider
 import dagger.hilt.android.AndroidEntryPoint
 import com.gws.ussd.databinding.ActivityMainBinding
 import com.gws.ussd.ui.home.HomeViewModel
 import com.gws.ussd.ui.login.LoginFragment
 import com.gws.ussd.ui.splash.SplashActivity
+import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(),
-    NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(){
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
 
-    private val homeFragmentViewModel by viewModels<HomeViewModel>()
+    @Inject
+    lateinit var currentUserProvider: CurrentUserProvider
+    @Inject
+    lateinit var currentServerProvider: CurrentServerProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +81,21 @@ class MainActivity : AppCompatActivity(),
             setupActionBarWithNavController(it, appBarConfiguration)
             navView.setupWithNavController(it)
         }
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.logout -> {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        currentUserProvider.clearUser()
+                        currentServerProvider.clearServer()
+                    }
+                    startActivity(Intent(this@MainActivity, SplashActivity::class.java))
+                    this@MainActivity.finish()
+                    binding.drawerLayout.closeDrawers()
+                }
+            }
+            true
+        }
+
     }
 
     @SuppressLint("MissingSuperCall")
@@ -119,16 +142,4 @@ class MainActivity : AppCompatActivity(),
             .addToBackStack(fragment::class.simpleName).commit()
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-
-        when (item.itemId) {
-            R.id.navigation_login -> {
-                startActivity(Intent(this@MainActivity, SplashActivity::class.java))
-                this@MainActivity.finish()
-            }
-        }
-
-        binding.drawerLayout.closeDrawers()
-        return true
-    }
 }

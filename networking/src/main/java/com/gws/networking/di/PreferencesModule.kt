@@ -68,6 +68,10 @@ object PreferencesModule {
                 }
             sharedPreferences.edit().putString(AUTH_USER_OBJECT, userEntityJson).commit()
         }
+
+        override suspend fun clearUser() {
+            sharedPreferences.edit().clear().commit()
+        }
     }
 
     const val AUTH_USER_OBJECT = "auth.userObject"
@@ -118,6 +122,10 @@ object PreferencesModule {
                     null
                 }
             sharedPreferences.edit().putString(AUTH_SERVER_OBJECT, userEntityJson).commit()
+        }
+
+        override suspend fun clearServer() {
+            sharedPreferences.edit().clear().commit()
         }
     }
 
