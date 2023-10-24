@@ -37,11 +37,8 @@ class SplashFragment : Fragment() {
         lifecycleScope.launchWhenResumed {
             delay(2000)
             val goLogin =
-                SplashFragmentDirections.actionSplashFragmentToNavigationLogin()
-            val goHome =
-                SplashFragmentDirections.actionNavigationSplashToNavigationHome()
-//            UssdNavigation.navigate(findNavController(), goLogin)
-            (requireActivity() as? MainActivity)?.showFragment(LoginFragment())
+                SplashFragmentDirections.actionSplashFragmentToServerFragment()
+            UssdNavigation.navigate(findNavController(), goLogin)
         }
 
     }

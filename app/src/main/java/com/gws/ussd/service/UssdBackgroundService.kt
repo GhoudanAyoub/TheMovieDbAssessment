@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.IBinder
 import android.telephony.TelephonyManager
 import androidx.annotation.RequiresApi
+import com.gws.local_models.models.getConcatUssd
 import com.gws.networking.repository.Synchronizer
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -30,7 +31,7 @@ class UssdBackgroundService : Service() {
             synchronizer?.fakeUssdList?.forEachIndexed { index, item ->
                 if (index < synchronizer?.fakeUssdList?.size?.minus(1) ?: 0) {
                     // Execute the USSD request
-                    runUssd(this, item.ussd ?: "") { result, message ->
+                    runUssd(this, item.getConcatUssd()) { result, message ->
                         item.reponceussd = message
                         item.etat = if (result) "1" else "0"
                         synchronizer?.updateList(item)
@@ -50,6 +51,7 @@ class UssdBackgroundService : Service() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun runUssd(context: Context, ussdCode: String, invoke: (Boolean,String) -> Unit) {
+        Timber.e("new USSD $ussdCode")
         val telephonyManager =
             context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 

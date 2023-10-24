@@ -36,6 +36,9 @@ dependencies {
     implementation(Deps.Androidx.Navigation.navigationFragmentKtx)
     implementation(Deps.Androidx.Navigation.navigationUiKtx)
     implementation(Deps.Androidx.Lifecycle.liveDataKtx)
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.10.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     androidTestImplementation(Deps.Androidx.Test.JUnit.jUnit)
     androidTestImplementation(Deps.Androidx.Test.JUnit.jUnitrunner)

@@ -1,4 +1,4 @@
-package com.gws.ussd.ui.details
+package com.gws.ussd.ui.server
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -10,7 +10,7 @@ import com.gws.networking.response.ResourceResponse
 import javax.inject.Inject
 
 @HiltViewModel
-class MovieDetailsViewModel @Inject constructor(
+class ServerViewModel @Inject constructor(
     private val moviesRepository: MoviesRepository
 ) : ViewModel() {
 

@@ -1,17 +1,19 @@
 package com.gws.ussd
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -19,20 +21,18 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
-import com.gws.common.utils.UssdNavigation
 import dagger.hilt.android.AndroidEntryPoint
 import com.gws.ussd.databinding.ActivityMainBinding
-import com.gws.ussd.ui.home.HomeFragment
 import com.gws.ussd.ui.home.HomeViewModel
 import com.gws.ussd.ui.login.LoginFragment
-import com.gws.ussd.ui.splash.SplashFragment
+import com.gws.ussd.ui.splash.SplashActivity
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),
+    NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var toggleDrawer: ActionBarDrawerToggle
 
     private val homeFragmentViewModel by viewModels<HomeViewModel>()
 
@@ -44,18 +44,6 @@ class MainActivity : AppCompatActivity() {
 
         setupView()
         setupMenu()
-        showFragment(SplashFragment())
-
-        val navDrawer = binding.navigationView
-//        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-//        navDrawer.setupWithNavController(navController)
-//        navController.addOnDestinationChangedListener { _, destination, _ ->
-//            when (destination.id) {
-//                R.id.navigation_splash,R.id.navigation_login -> {
-//                    binding?.navigationView?.visibility = View.GONE
-//                }
-//            }
-//        }
     }
 
     private fun setupView() {
@@ -67,18 +55,19 @@ class MainActivity : AppCompatActivity() {
             this.setHomeButtonEnabled(true)
         }
     }
+
     private fun setupMenu() {
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navigationView
-        var navHostFragment = binding.navHostFragmentActivityMain as? NavHostFragment
-        var navController = navHostFragment?.navController
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_main) as NavHostFragment
+        val navController = navHostFragment.navController
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_login, R.id.navigation_splash
-            ), drawerLayout
+            navController.graph, drawerLayout
         )
         navController?.let {
             setupActionBarWithNavController(it, appBarConfiguration)
@@ -86,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -120,11 +110,25 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        val navController = findNavController(R.id.nav_host_fragment_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
     public fun showFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, fragment)
+        supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_main, fragment)
             .addToBackStack(fragment::class.simpleName).commit()
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.navigation_login -> {
+                startActivity(Intent(this@MainActivity, SplashActivity::class.java))
+                this@MainActivity.finish()
+            }
+        }
+
+        binding.drawerLayout.closeDrawers()
+        return true
     }
 }

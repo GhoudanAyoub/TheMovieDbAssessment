@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:layout_height="wrap_content"
     tools:layout_width="match_parent"
-    android:background="@color/content_white"
+    android:background="@color/transparent"
     tools:parentTag="android.widget.LinearLayout">
 
     <androidx.core.widget.ContentLoadingProgressBar
@@ -12,7 +12,7 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="match_parent"
         android:layout_height="46dp"
-        android:background="@color/content_white"
+        android:background="@color/transparent"
         android:indeterminateTint="@color/brand_primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

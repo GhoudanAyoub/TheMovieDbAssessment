@@ -33,3 +33,36 @@ data class Ussd(
     var datesaisie: String? = null
 
 ) : Parcelable
+
+
+fun Ussd.getConcatUssd(): String{
+    if (this == null) {
+        return "" // Handle null Ussd object
+    }
+
+    val sumstep = this.sumstep?.toInt() ?: 0 // Convert sumstep to an integer, defaulting to 0 if null
+    val ussdBase = this.ussd?.removeSuffix("#") ?: "" // Remove '#' from ussd and default to an empty string
+
+   // Replace with your actual step values
+
+    return buildString {
+        append(ussdBase)
+        for (i in 1..sumstep) {
+            val stepValues =  when(i){
+                1 -> step1
+                2 -> step2
+                3 -> step3
+                4 -> step4
+                5 -> step5
+                6 -> step6
+                7 -> step7
+                8 -> step8
+                9 -> step9
+                10 -> step10
+                else -> {""}
+            }
+            append("*${stepValues ?: ""}") // Handle null step values
+        }
+        append("#")
+    }
+}

@@ -9,14 +9,16 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:theme="@style/AppTheme.AppBarOverlay"
+            android:layout_alignParentTop="true">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -27,13 +29,13 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <FrameLayout
-            android:id="@+id/nav_host_fragment_activity_main"
+        <androidx.fragment.app.FragmentContainerView
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:id="@+id/nav_host_fragment_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:defaultNavHost="true"
-            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_below="@+id/appBarContainer"
             app:navGraph="@navigation/mobile_navigation" />
 
         <FrameLayout
@@ -47,20 +49,20 @@
             android:focusableInTouchMode="true"
             android:visibility="gone">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+            <LinearLayout
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@color/content_white"
+                android:background="@color/transparent"
                 app:cardCornerRadius="50dp">
 
                 <com.gws.ui_core.loaders.LoaderView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </androidx.cardview.widget.CardView>
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
         </FrameLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </RelativeLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
@@ -70,6 +72,8 @@
         android:fitsSystemWindows="true"
         android:theme="@style/NavigationViewItemStyle"
         app:itemTextAppearance="@style/NavigationViewStyle"
+        app:itemTextColor="@drawable/icon_selector"
+        android:background="@color/content_white"
         app:menu="@menu/bottom_nav_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

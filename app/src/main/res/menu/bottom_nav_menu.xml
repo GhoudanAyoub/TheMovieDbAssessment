@@ -8,7 +8,7 @@
         android:title="@string/title_home" />
 
     <item
-        android:id="@+id/navigation_favorite"
+        android:id="@+id/navigation_server"
         android:title="Parameters de serveur" />
 
     <item
