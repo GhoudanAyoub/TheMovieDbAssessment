@@ -26,6 +26,8 @@ dependencies {
 
     implementation(Deps.Coroutines.coroutines)
 
+    implementation(Deps.Androidx.Navigation.navigationFragmentKtx)
+    implementation(Deps.Androidx.Navigation.navigationUiKtx)
     implementation(Deps.Timber.timber)
 
 }

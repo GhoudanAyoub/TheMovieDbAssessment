@@ -27,6 +27,10 @@ def appModules = props.getProperty('appModules').split(",")
 
 subprojects {
 
+    repositories {
+        maven { url "https://jitpack.io" } // Specify the URL inside 'url'
+    }
+
     if (appModules.contains(it.name)) {
         if (it.name == 'app') {
             apply plugin: 'com.android.application'
@@ -42,7 +46,7 @@ subprojects {
             compileSdkVersion 33
             namespace = "com.gws.ussd"
             defaultConfig {
-                minSdkVersion 21
+                minSdkVersion 24
                 targetSdkVersion 33
                 versionCode CI.versionCode
                 versionName CI.publishVersion

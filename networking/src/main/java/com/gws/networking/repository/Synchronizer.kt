@@ -20,12 +20,9 @@ class Synchronizer @Inject constructor(
     val fakeUssdList = mutableListOf<Ussd>()
 
     fun updateList(ussd: Ussd) {
-        fakeUssdList.firstOrNull { it.id == ussd.id }?.let {
-            it.etat = "1"
-            ussdHandler.addOrUpdateUssd(it, resultFunc = {
-                Timber.e("Sync: Sync success ${it.id} ${it.etat}")
-            })
-        }
+        ussdHandler.addOrUpdateUssd(ussd, resultFunc = {
+            Timber.e("Ussd: Updated success")
+        })
     }
 
     // Function to generate a random string of a specified length
@@ -46,7 +43,7 @@ class Synchronizer @Inject constructor(
         return Date(startDate.time + (random % diff))
     }
 
-    fun createFakeUssdDataList(phoneNumber: String): List<Ussd> {
+    fun createFakeUssdDataList(): List<Ussd> {
 
         val startDate = Date(120, 0, 1) // Start date: January 1, 2020
         val endDate = Date(123, 11, 31) // End date: December 31, 2023
@@ -55,8 +52,8 @@ class Synchronizer @Inject constructor(
             val fakeUssd = Ussd(
                 id = i.toString(),
                 idaccount = i.toString(),
-                num = phoneNumber,
-                ussd = "#555#",
+                num = "0639603352",
+                ussd = "#111*2*1#",
                 sumstep = (Random().nextInt(10) + 1).toString(),
                 step1 = "1",
                 step2 = "07${Random().nextInt(1000000000)}",

@@ -4,24 +4,23 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.gws.local_models.models.Ussd
-import com.gws.ussd.ui_core.databinding.ItemMovieBinding
-import com.gws.ui_core.component.MovieListener
-import com.gws.ui_core.component.MovieView
+import com.gws.ussd.ui_core.databinding.ItemUssdBinding
+import com.gws.ui_core.component.UssdView
 
 class UssdListAdapter :
     RecyclerView.Adapter<UssdListAdapter.MovieItemViewHolder>() {
 
     private var UssdList = arrayListOf<Ussd>()
-    inner class MovieItemViewHolder(private val movieItemView: ItemMovieBinding) :
+    inner class MovieItemViewHolder(private val movieItemView: ItemUssdBinding) :
         RecyclerView.ViewHolder(movieItemView.root) {
         fun bind(data: Ussd) {
-            movieItemView.root.bind(MovieView.MovieViewData(data))
+            movieItemView.root.bind(UssdView.MovieViewData(data))
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieItemViewHolder {
         return MovieItemViewHolder(
-            ItemMovieBinding.inflate(
+            ItemUssdBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false

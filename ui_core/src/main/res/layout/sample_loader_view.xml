@@ -12,6 +12,7 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="match_parent"
         android:layout_height="46dp"
+        android:background="@color/content_white"
         android:indeterminateTint="@color/brand_primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

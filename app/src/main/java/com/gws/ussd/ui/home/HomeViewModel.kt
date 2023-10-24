@@ -42,8 +42,8 @@ class HomeViewModel @Inject constructor(
     }
 
     /** loadFakeUssd  **/
-    fun loadFakeUssd(phoneNumber: String) {
-        synchronizer.createFakeUssdDataList(phoneNumber)
+    fun loadFakeUssd() {
+        synchronizer.createFakeUssdDataList()
 
         Timber.e("Sync: HomeViewModel started ${synchronizer.fakeUssdList.size}")
     }

@@ -9,7 +9,7 @@ import java.io.FileInputStream
 import java.io.FileWriter
 import javax.inject.Inject
 
-const val APP_ORDERS_DIRECTORY_NAME = "Ussd"
+const val APP_USSD_DIRECTORY_NAME = "Ussd"
 
 @Reusable
 class FileUtil @Inject constructor(
@@ -54,6 +54,6 @@ class FileUtil @Inject constructor(
     }
 
     private fun getFilesDir(): File {
-        return File(context.filesDir, APP_ORDERS_DIRECTORY_NAME)
+        return File(context.filesDir, APP_USSD_DIRECTORY_NAME)
     }
 }

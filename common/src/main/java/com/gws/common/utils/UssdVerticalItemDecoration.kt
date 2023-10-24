@@ -5,7 +5,7 @@ import android.view.View
 import androidx.annotation.Px
 import androidx.recyclerview.widget.RecyclerView
 
-class MoviesVerticalItemDecoration(private val spanCount: Int, @Px private val spacing: Int) :
+class UssdVerticalItemDecoration(private val spanCount: Int, @Px private val spacing: Int) :
     RecyclerView.ItemDecoration() {
     override fun getItemOffsets(
         outRect: Rect, view: View, parent: RecyclerView,

@@ -8,7 +8,6 @@ import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import com.gws.ussd.networking.R
 import kotlin.random.Random
 import kotlinx.coroutines.delay
 
@@ -16,13 +15,13 @@ import kotlinx.coroutines.delay
 class OneSyncWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val ussdRepository: UssdRepository
+    private val ussdRepository: UssdRepositoryImpl
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
 
         startForegroundService()
-        ussdRepository.run()
+//        ussdRepository.run()
         return Result.success()
     }
 

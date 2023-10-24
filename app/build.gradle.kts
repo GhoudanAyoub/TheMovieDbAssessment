@@ -55,4 +55,6 @@ dependencies {
     implementation(Deps.Androidx.phoneApi.play_services_auth)
     implementation(Deps.Androidx.phoneApi.play_services_auth_api_phone)
     kapt(Deps.Glide.compiler)
+
+    implementation( "com.github.romellfudi.VoIpUSSD:kotlin-ussd-library:1.4.a")
 }

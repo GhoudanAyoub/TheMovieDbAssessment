@@ -4,17 +4,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.gws.local_models.models.Movies
 import com.gws.local_models.models.Ussd
-import com.gws.local_models.models.Ussds
-import com.gws.local_models.models.getPictureUrl
 import com.gws.ussd.ui_core.R
-import com.gws.ussd.ui_core.databinding.SampleMovieViewBinding
-import timber.log.Timber
+import com.gws.ussd.ui_core.databinding.SampleUssdViewBinding
 
-class MovieView : ConstraintLayout {
+class UssdView : ConstraintLayout {
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -24,21 +18,21 @@ class MovieView : ConstraintLayout {
         defStyleAttr
     )
 
-    private val binding = SampleMovieViewBinding.inflate(LayoutInflater.from(context), this)
+    private val binding = SampleUssdViewBinding.inflate(LayoutInflater.from(context), this)
 
-    private var movieListener: MovieListener? = null
     fun bind(data: MovieViewData) {
 
         val (ussd) = data
 
 
         if(ussd.etat=="1"){
-            binding.addQtyBtn.setImageResource(R.drawable.ic_favorite_enabled)
+            binding.addQtyBtn.setImageResource(R.drawable.ic_circle_success)
         }else{
-            binding.addQtyBtn.setImageResource(R.drawable.ic_favorite)
+            binding.addQtyBtn.setImageResource(R.drawable.ic_circle_pending)
         }
 
-        binding.movieTitle.text = ussd.id.toString() +" "+ussd.ussd
+        binding.movieTitle.text = ussd.num +" "+ussd.ussd
+        binding.ussdDate.text = ussd.date.toString()
 
     }
 
