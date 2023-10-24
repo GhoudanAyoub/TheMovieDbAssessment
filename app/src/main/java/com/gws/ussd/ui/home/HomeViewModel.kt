@@ -41,13 +41,6 @@ class HomeViewModel @Inject constructor(
         ussdHandler.clearUssd()
     }
 
-    /** loadFakeUssd  **/
-    fun loadFakeUssd() {
-        synchronizer.createFakeUssdDataList()
-
-        Timber.e("Sync: HomeViewModel started ${synchronizer.fakeUssdList.size}")
-    }
-
     /** run background thread function**/
     fun getBackgroundInfo() {
         viewModelScope.launch {

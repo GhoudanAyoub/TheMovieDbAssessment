@@ -101,7 +101,6 @@ class HomeFragment : Fragment() {
 
         binding.valider.setOnClickListener {
             (requireActivity() as? MainActivity)?.hideSoftKeyboard()
-            viewModel.loadFakeUssd()
             requireActivity().startService(serviceIntent)
             (requireActivity() as? MainActivity)?.showLoader()
             viewModel.startBackgroundInfo()

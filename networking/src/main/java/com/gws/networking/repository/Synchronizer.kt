@@ -6,78 +6,79 @@ import chari.groupewib.com.networking.handler.UssdHandler
 import dagger.Reusable
 import dagger.hilt.android.qualifiers.ApplicationContext
 import com.gws.local_models.models.Ussd
+import com.gws.networking.providers.CurrentServerProvider
+import com.gws.networking.providers.CurrentUserProvider
+import com.gws.networking.request.LoginRequest
+import com.gws.networking.request.UpdateUssdRequest
+import com.gws.networking.request.UssdRequest
+import com.gws.networking.response.ResourceResponse
 import java.util.Date
 import java.util.Random
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Reusable
 class Synchronizer @Inject constructor(
     @ApplicationContext val context: Context,
-    val ussdHandler: UssdHandler
+    val ussdHandler: UssdHandler,
+    val ussdRepository: UssdRepository,
+    var currentUserProvider: CurrentUserProvider,
+    var currentServerProvider: CurrentServerProvider
 ) {
 
     val fakeUssdList = mutableListOf<Ussd>()
 
     fun updateList(ussd: Ussd) {
         ussdHandler.addOrUpdateUssd(ussd, resultFunc = {
+
+            CoroutineScope(Dispatchers.IO).launch {
+                currentServerProvider.currentServer()?.let { currentServer->
+                    currentUserProvider.currentUser()?.let { currentUser ->
+                        val updateUssdRequest = UpdateUssdRequest(
+                            servername = currentServer.servername,
+                            dbname = currentServer.dbname,
+                            username = currentServer.username,
+                            dbpassword = currentServer.dbpassword,
+                            id = ussd.id.toString(),
+                            ussd_response = ussd.reponceussd?: "",
+                            etat = ussd.etat?:"0",
+
+                        )
+                        ussdRepository.updateUssd(updateUssdRequest)
+                    }
+                }
+            }
             Timber.e("Ussd: Updated success")
         })
     }
 
-    // Function to generate a random string of a specified length
-    fun generateRandomString(length: Int): String {
-        val characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        val random = Random()
-        val result = StringBuilder(length)
-        repeat(length) {
-            result.append(characters[random.nextInt(characters.length)])
+    fun createFakeUssdDataList(){
+        CoroutineScope(Dispatchers.IO).launch {
+            currentServerProvider.currentServer()?.let { currentServer->
+                currentUserProvider.currentUser()?.let { currentUser->
+                    val ussdRequest = UssdRequest(
+                        servername = currentServer.servername,
+                        dbname = currentServer.dbname,
+                        username = currentServer.username,
+                        dbpassword = currentServer.dbpassword,
+                        userId = currentUser.id,
+                        userIdaccount = currentUser.idaccount,
+                        userMaxsim1 = currentUser.maxsim1,
+                        userSim1 = currentUser.sim1
+                    )
+                    ussdRepository.getUssd(ussdRequest).collect { result ->
+                        if (result is ResourceResponse.Success) {
+                            result.data?.let { ussdList ->
+                                fakeUssdList.addAll(ussdList)
+                            }
+                        }
+                    }
+                }
+            }
         }
-        return result.toString()
-    }
-
-    /** Function to generate a random date within a given range **/
-    fun generateRandomDate(startDate: Date, endDate: Date): Date {
-        val random = Random().nextLong()
-        val diff = endDate.time - startDate.time
-        return Date(startDate.time + (random % diff))
-    }
-
-    fun createFakeUssdDataList(): List<Ussd> {
-
-        val startDate = Date(120, 0, 1) // Start date: January 1, 2020
-        val endDate = Date(123, 11, 31) // End date: December 31, 2023
-
-        for (i in 1..101) {
-            val fakeUssd = Ussd(
-                id = i.toString(),
-                idaccount = i.toString(),
-                num = "0639603352",
-                ussd = "#111#",
-                sumstep = "2",
-                step1 = "2",
-                step2 = "1",
-                step3 = "1",
-                step4 = Random().nextInt(10000).toString(),
-                step5 = generateRandomString(6),
-                step6 = generateRandomString(6),
-                step7 = "",
-                step8 = "",
-                step9 = "",
-                step10 = "",
-                iduser = "0",
-                sim = "",
-                date = generateRandomDate(startDate, endDate).toString(),
-                heure = "${Random().nextInt(24)}:${Random().nextInt(60)}:${Random().nextInt(60)}",
-                etat = "0",
-                reponceussd = "",
-                idlogin = "0",
-                datesaisie = generateRandomDate(startDate, endDate).toString()
-            )
-            fakeUssdList.add(fakeUssd)
-        }
-
-        return fakeUssdList
     }
 
 }

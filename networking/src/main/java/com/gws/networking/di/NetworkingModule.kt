@@ -34,7 +34,6 @@ object NetworkingModule {
 
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
-            .addInterceptor(defaultQueryParamsInterceptor)
             .addInterceptor(CurlInterceptor(object : Logger {
                 override fun log(message: String) {
                     Timber.v("Curl", message)

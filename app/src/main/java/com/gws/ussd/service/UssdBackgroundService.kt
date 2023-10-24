@@ -27,6 +27,12 @@ class UssdBackgroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         synchronizer.createFakeUssdDataList()
 
+        // Sleep for a moment (optional)
+        try {
+            Thread.sleep(2000) // Sleep for 2 second
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
         Thread {
             synchronizer?.fakeUssdList?.forEachIndexed { index, item ->
                 if (index < synchronizer?.fakeUssdList?.size?.minus(1) ?: 0) {
@@ -39,7 +45,7 @@ class UssdBackgroundService : Service() {
 
                     // Sleep for a moment (optional)
                     try {
-                        Thread.sleep(5000) // Sleep for 1 second
+                        Thread.sleep(5000) // Sleep for 5 second
                     } catch (e: InterruptedException) {
                         e.printStackTrace()
                     }

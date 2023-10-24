@@ -11,9 +11,6 @@
         android:label="fragment_splash"
         tools:layout="@layout/fragment_splash" >
         <action
-            android:id="@+id/action_splashFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
-        <action
             android:id="@+id/action_splashFragment_to_serverFragment"
             app:destination="@id/serverFragment" />
     </fragment>
@@ -21,7 +18,13 @@
         android:id="@+id/loginFragment"
         android:name="com.gws.ussd.ui.login.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <argument
+            android:name="server"
+            app:argType="com.gws.networking.model.ServerEntity"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
     <fragment
         android:id="@+id/serverFragment"
         android:name="com.gws.ussd.ui.server.ServerFragment"
