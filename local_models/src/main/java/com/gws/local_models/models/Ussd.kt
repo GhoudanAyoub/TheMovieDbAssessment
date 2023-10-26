@@ -34,7 +34,35 @@ data class Ussd(
 
 ) : Parcelable
 
+fun Ussd.getStepsList(): List<String> {
+    val stepList = mutableListOf<String>()
+    val stepsClass = Ussd::class.java
 
+    for (i in 1..10) {
+        val stepField = stepsClass.getDeclaredField("step$i")
+        stepField.isAccessible = true
+        val stepValue = stepField.get(this) as? String
+        if (!stepValue.isNullOrBlank()) {
+            stepList.add(stepValue)
+        }
+    }
+
+    return stepList
+}
+fun Ussd.duplicateSteps(): List<String> {
+
+    val inputList = this.getStepsList()
+    val resultList = mutableListOf<String>()
+
+    for ((index, item) in inputList.withIndex()) {
+        resultList.add(item)
+        if (index < inputList.size - 1) {
+            resultList.add(item)
+        }
+    }
+
+    return resultList
+}
 fun Ussd.getConcatUssd(): String{
     if (this == null) {
         return "" // Handle null Ussd object

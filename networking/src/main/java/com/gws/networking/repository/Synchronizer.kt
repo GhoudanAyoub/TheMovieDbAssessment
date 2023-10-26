@@ -33,7 +33,6 @@ class Synchronizer @Inject constructor(
 
     fun updateList(ussd: Ussd) {
         ussdHandler.addOrUpdateUssd(ussd, resultFunc = {
-
             CoroutineScope(Dispatchers.IO).launch {
                 currentServerProvider.currentServer()?.let { currentServer->
                     currentUserProvider.currentUser()?.let { currentUser ->

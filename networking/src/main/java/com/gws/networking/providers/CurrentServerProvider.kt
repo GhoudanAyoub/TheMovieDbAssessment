@@ -1,9 +1,9 @@
 package com.gws.networking.providers
 
-import com.gws.networking.model.ServerEntity
+import com.gws.networking.model.SerEntity
 
 interface CurrentServerProvider {
-    suspend fun currentServer(): ServerEntity?
-    suspend fun saveServer(serverEntity: ServerEntity)
+    suspend fun currentServer(): SerEntity?
+    suspend fun saveServer(serverEntity: SerEntity)
     suspend fun clearServer()
 }

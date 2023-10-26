@@ -7,9 +7,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import com.gws.common.utils.Constant
 import com.gws.networking.api.Api
-import com.gws.networking.interceptor.DefaultQueryParamsInterceptor
 import javax.inject.Singleton
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -26,7 +24,6 @@ object NetworkingModule {
     @Singleton
     @Provides
     fun providesOkHttp(
-        defaultQueryParamsInterceptor: DefaultQueryParamsInterceptor
     ): OkHttpClient {
 
         val loggingInterceptor = HttpLoggingInterceptor()

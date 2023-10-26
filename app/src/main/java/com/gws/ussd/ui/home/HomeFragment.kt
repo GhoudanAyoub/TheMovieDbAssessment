@@ -27,12 +27,17 @@ import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.gws.common.utils.UssdVerticalItemDecoration
+import com.gws.local_models.models.Ussd
+import com.gws.local_models.models.duplicateSteps
 import com.gws.networking.response.ResourceResponse
 import com.gws.ussd.MainActivity
 import com.gws.ussd.databinding.FragmentHomeBinding
 import com.gws.ussd.service.UssdBackgroundService
+import com.romellfudi.ussdlibrary.USSDApi
+import com.romellfudi.ussdlibrary.USSDController
 import dagger.hilt.android.AndroidEntryPoint
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
+import javax.inject.Inject
 import kotlin.math.roundToInt
 import timber.log.Timber
 
@@ -40,9 +45,19 @@ import timber.log.Timber
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
+    @Inject
+    lateinit var ussdApi: USSDApi
+    var ussdList: MutableList<Ussd> = mutableListOf()
 
-//    @Inject
-//    lateinit var ussdApi: USSDApi
+    var result = ""
+    var finish = false
+    var currentCodeIndex = 0
+    var currentIndex = 0
+    var codeList: List<String> = emptyList()
+    val map = hashMapOf(
+        "KEY_LOGIN" to listOf("espere", "waiting", "loading", "esperando"),
+        "KEY_ERROR" to listOf("problema", "problem", "error", "null")
+    )
 
     private lateinit var binding: FragmentHomeBinding
     private val viewModel by activityViewModels<HomeViewModel>()
@@ -89,10 +104,20 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         serviceIntent = Intent(requireContext(), UssdBackgroundService::class.java)
-
+        viewModel.getUssdList()
         // Permission denied; request the permission
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_PHONE_NUMBERS)
-            != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CALL_PHONE)
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_PHONE_NUMBERS
+            )
+            != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CALL_PHONE
+            )
+            != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_PHONE_STATE
+            )
             != PackageManager.PERMISSION_GRANTED
         ) {
             showPermissionRationaleDialog(requireContext())
@@ -100,12 +125,77 @@ class HomeFragment : Fragment() {
         setupMoviesList()
 
         binding.valider.setOnClickListener {
-            (requireActivity() as? MainActivity)?.hideSoftKeyboard()
-            requireActivity().startService(serviceIntent)
-            (requireActivity() as? MainActivity)?.showLoader()
-            viewModel.startBackgroundInfo()
+//            runUSSDWithCodeList("#111#", listOf("3","6","6", "3", "3", "5", "5"))
+//            (requireActivity() as? MainActivity)?.hideSoftKeyboard()
+//            requireActivity().startService(serviceIntent)
+//            (requireActivity() as? MainActivity)?.showLoader()
+//            viewModel.startBackgroundInfo()
+            runUSSDWithCodeList()
         }
     }
+
+    fun sendNextCode() {
+        if (currentCodeIndex < codeList.size) {
+            val code = codeList[currentCodeIndex]
+            ussdApi.send(code) { response ->
+                result += "\n-\n$response"
+                finish = false
+                // Sleep for a moment (optional)
+                try {
+                    Thread.sleep(300) // Sleep for 5 seconds
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }
+                currentCodeIndex++
+                sendNextCode()
+            }
+        } else {
+            // All codes in the list have been processed
+        }
+    }
+
+    fun runUSSDWithCodeList() {
+        if (currentIndex < ussdList.size) {
+            val ussd = ussdList[currentIndex]
+            codeList = ussd.duplicateSteps()
+
+            ussdApi.callUSSDInvoke(
+                requireActivity(),
+                ussd.ussd ?: "",
+                0,
+                map,
+                object : USSDController.CallbackInvoke {
+                    override fun responseInvoke(message: String) {
+                        result += "\n-\n$message"
+                        sendNextCode()
+                    }
+
+                    override fun over(message: String) {
+                        result += "\n-\n$message"
+                        when {
+                            finish -> {
+                                ussd.reponceussd = message
+                                ussd.etat = "1"
+                                viewModel?.updateList(ussd)
+                                currentIndex + 1
+                                runUSSDWithCodeList()
+                            }
+
+                            else -> {
+                                if(message!= "Check your accessibility") {
+                                    ussd.reponceussd = message
+                                    ussd.etat = "0"
+                                    viewModel?.updateList(ussd)
+                                    currentIndex + 1
+                                    runUSSDWithCodeList()
+                                }
+                            }
+                        }
+                    }
+                })
+        }
+    }
+
 
     private fun showPermissionRationaleDialog(context: Context) {
         val dialogBuilder = AlertDialog.Builder(context)
@@ -118,7 +208,11 @@ class HomeFragment : Fragment() {
 
             ActivityCompat.requestPermissions(
                 requireActivity(), // Cast the context to an Activity
-                arrayOf(Manifest.permission.READ_PHONE_NUMBERS,Manifest.permission.CALL_PHONE),
+                arrayOf(
+                    Manifest.permission.READ_PHONE_NUMBERS,
+                    Manifest.permission.CALL_PHONE,
+                    Manifest.permission.READ_PHONE_STATE
+                ),
                 123
             )
             dialog.dismiss()
@@ -135,9 +229,10 @@ class HomeFragment : Fragment() {
 
 
     private fun subscribe() {
-        viewModel.fakeUssd.observe(viewLifecycleOwner) {
+        viewModel.ussdList.observe(viewLifecycleOwner) {
             when (it) {
                 is ResourceResponse.Loading -> {
+//                    (requireActivity() as? MainActivity)?.showLoader()
                 }
 
                 is ResourceResponse.Error -> {
@@ -147,6 +242,8 @@ class HomeFragment : Fragment() {
                 is ResourceResponse.Success -> {
                     (requireActivity() as? MainActivity)?.hideLoader()
                     ussdListAdapter.setUssdList(it.data ?: emptyList())
+                    ussdList.clear()
+                    ussdList.addAll(it.data ?: emptyList())
                 }
             }
         }
@@ -183,37 +280,95 @@ class HomeFragment : Fragment() {
         viewModel.clearList()
     }
 
-    fun runussd2(){
-//        var result = ""
-//        var finish = false
-//
-//        val map = hashMapOf(
-//            "KEY_LOGIN" to listOf("espere", "waiting", "loading", "esperando"),
-//            "KEY_ERROR" to listOf("problema", "problem", "error", "null"))
-//        ussdApi.callUSSDInvoke(requireContext(),  binding.inputEditText.text.toString(), map,
-//            object : USSDController.CallbackInvoke {
-//                override fun responseInvoke(message: String) {
-//                    result += "\n-\n$message"
-//                    Timber.i("UssdState onGoing: $result")
-//                    ussdApi.send("2") {
-//                        result += "\n-\n$it"
-//                        ussdApi.send("1") {
-//                            result += "\n-\n$it"
-//                            finish = true
-//                        }
-//                    }
-//                }
-//
-//                override fun over(message: String) {
-//                    result += "\n-\n$message"
-//                    when {
-//                        finish -> Timber.i("Successful")
-//                        else -> Timber.i("Error")
-//                    }
-//                    Timber.i("result")
-//                }
-//            })
+    fun runussd2(ussd: String, ussdList: List<String>) {
+        var result = ""
+        var finish = false
+
+        val map = hashMapOf(
+            "KEY_LOGIN" to listOf("espere", "waiting", "loading", "esperando"),
+            "KEY_ERROR" to listOf("problema", "problem", "error", "null")
+        )
+        ussdApi.callUSSDInvoke(requireActivity(), ussd, 1, map,
+            object : USSDController.CallbackInvoke {
+                override fun responseInvoke(message: String) {
+                    result += "\n-\n$message"
+                    ussdApi.send("3") {
+                        result += "\n-\n$it"
+                        finish = false
+
+                        // Sleep for a moment (optional)
+                        try {
+                            Thread.sleep(500) // Sleep for 5 second
+                        } catch (e: InterruptedException) {
+                            e.printStackTrace()
+                        }
+                        ussdApi.send("6") {
+                            result += "\n-\n$it"
+                            finish = false
+                            // Sleep for a moment (optional)
+                            try {
+                                Thread.sleep(500) // Sleep for 5 second
+                            } catch (e: InterruptedException) {
+                                e.printStackTrace()
+                            }
+                            ussdApi.send("6") {
+                                result += "\n-\n$it"
+                                finish = false
+                                // Sleep for a moment (optional)
+                                try {
+                                    Thread.sleep(500) // Sleep for 5 second
+                                } catch (e: InterruptedException) {
+                                    e.printStackTrace()
+                                }
+                                ussdApi.send("3") {
+                                    result += "\n-\n$it"
+                                    finish = false
+                                    // Sleep for a moment (optional)
+                                    try {
+                                        Thread.sleep(500) // Sleep for 5 second
+                                    } catch (e: InterruptedException) {
+                                        e.printStackTrace()
+                                    }
+                                    ussdApi.send("3") {
+                                        result += "\n-\n$it"
+                                        finish = false
+                                        // Sleep for a moment (optional)
+                                        try {
+                                            Thread.sleep(500) // Sleep for 5 second
+                                        } catch (e: InterruptedException) {
+                                            e.printStackTrace()
+                                        }
+                                        ussdApi.send("5") {
+                                            result += "\n-\n$it"
+                                            finish = false
+                                            // Sleep for a moment (optional)
+                                            try {
+                                                Thread.sleep(500) // Sleep for 5 second
+                                            } catch (e: InterruptedException) {
+                                                e.printStackTrace()
+                                            }
+                                            ussdApi.send("5") {
+                                                result += "\n-\n$it"
+                                                finish = false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                override fun over(message: String) {
+                    result += "\n-\n$message"
+                    when {
+                        finish -> Timber.i("UssdState Successful")
+                        else -> Timber.i("UssdState Error")
+                    }
+                }
+            })
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun runUssd() {
@@ -256,8 +411,14 @@ class HomeFragment : Fragment() {
             phoneNumber = telephonyManager.line1Number ?: ""
         } catch (e: SecurityException) {
             // Permission denied; request the permission
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_NUMBERS)
-                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_PHONE_NUMBERS
+                )
+                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.CALL_PHONE
+                )
                 != PackageManager.PERMISSION_GRANTED
             ) {
                 // You can show a rationale for needing the permission here

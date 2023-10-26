@@ -2,7 +2,7 @@ package com.gws.networking.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.gws.networking.model.ServerEntity
+import com.gws.networking.model.SerEntity
 import com.gws.networking.model.UserEntity
 import com.gws.networking.providers.CurrentServerProvider
 import com.gws.networking.providers.CurrentUserProvider
@@ -11,7 +11,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import java.util.UUID
 import javax.inject.Named
 import javax.inject.Singleton
 import kotlinx.serialization.SerializationException
@@ -94,16 +93,16 @@ object PreferencesModule {
         json: Json,
         @Named(AUTH_SERVER_OBJECT) sharedPreferences: SharedPreferences
      ) = object : CurrentServerProvider {
-        override suspend fun currentServer(): ServerEntity? {
+        override suspend fun currentServer(): SerEntity? {
 
             val userCredentialsJson = sharedPreferences.getString(
                 AUTH_SERVER_OBJECT,
                 ""
             )
-            val userEntity: ServerEntity? = userCredentialsJson?.let {
+            val userEntity: SerEntity? = userCredentialsJson?.let {
                  try {
                     json.decodeFromString(
-                        ServerEntity.serializer(), userCredentialsJson
+                        SerEntity.serializer(), userCredentialsJson
                     )
                 } catch (e: SerializationException) {
                     null
@@ -114,7 +113,7 @@ object PreferencesModule {
 
         }
 
-        override suspend fun saveServer(serverEntity: ServerEntity) {
+        override suspend fun saveServer(serverEntity: SerEntity) {
             val userEntityJson =
                 try {
                     Json.encodeToString(serverEntity)

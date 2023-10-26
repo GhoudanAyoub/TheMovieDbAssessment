@@ -1,10 +1,13 @@
 package com.gws.ussd.ui.login
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -46,6 +49,7 @@ class LoginFragment : Fragment() {
             } else {
                 binding.errorMessage.visibility = View.GONE
                 (requireActivity() as? SplashActivity)?.showLoader()
+                hideKeyboardWithView(requireContext(), binding.password)
                 server?.let { server ->
                     val LoginRequest = LoginRequest(
                         server.servername,
@@ -56,12 +60,21 @@ class LoginFragment : Fragment() {
                         binding.password.text.toString()
                     )
                     viewModel.login(LoginRequest)
+
                 }
             }
         }
         subscribe()
     }
 
+    fun hideKeyboardWithView(context: Context, view: View? = null) {
+        val imm: InputMethodManager = context.getSystemService(Activity.INPUT_METHOD_SERVICE)
+                as InputMethodManager
+
+        if (view != null) {
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
     private fun subscribe() {
         viewModel.login.observe(viewLifecycleOwner) { response ->
             when (response) {

@@ -21,7 +21,7 @@
         tools:layout="@layout/fragment_login" >
         <argument
             android:name="server"
-            app:argType="com.gws.networking.model.ServerEntity"
+            app:argType="com.gws.networking.model.SerEntity"
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>

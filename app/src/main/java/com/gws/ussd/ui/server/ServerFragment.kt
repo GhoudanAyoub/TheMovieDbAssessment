@@ -9,12 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.gws.common.utils.UssdNavigation
-import com.gws.networking.model.ServerEntity
-import com.gws.networking.providers.CurrentServerProvider
+import com.gws.networking.model.SerEntity
 import dagger.hilt.android.AndroidEntryPoint
 import com.gws.ussd.databinding.FragmentDetailsBinding
-import com.gws.ussd.ui.login.LoginViewModel
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ServerFragment : Fragment() {
@@ -52,7 +49,7 @@ class ServerFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }else {
-                val serverEntity = ServerEntity(
+                val serverEntity = SerEntity(
                     servername = binding.serverName.text.toString(),
                     dbname = binding.dbName.text.toString(),
                     username = binding.userName.text.toString(),

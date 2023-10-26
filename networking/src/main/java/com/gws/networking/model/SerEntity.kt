@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Parcelize
 @Serializable
-data class ServerEntity(
+data class SerEntity(
     val servername: String,
     val dbname: String,
     val username : String,

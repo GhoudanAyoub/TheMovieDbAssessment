@@ -21,7 +21,6 @@ class OneSyncWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
 
         startForegroundService()
-//        ussdRepository.run()
         return Result.success()
     }
 
@@ -31,7 +30,6 @@ class OneSyncWorker @AssistedInject constructor(
             ForegroundInfo(
                 Random.nextInt(),
                 NotificationCompat.Builder(context, "synchronization_channel")
-//                    .setSmallIcon(R.drawable)
                     .setContentText("Synchronization...")
                     .setContentTitle("Starting Synchronization")
                     .build()
